@@ -2,3 +2,5 @@
 /obj
 /bin
 /.idea
+/.vs
+*.user

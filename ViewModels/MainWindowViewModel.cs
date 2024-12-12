@@ -9,15 +9,13 @@ namespace weirditor.ViewModels;
 
 public class MainWindowViewModel
 {
-    private EditorModel Editor;
     public EditorViewModel EditorView { get; set; }
-    // public FileViewModel File { get; set; }
+    public FileViewModel FileView { get; set; }
 
     public MainWindowViewModel()
     {
         EditorView = new EditorViewModel();
-        Editor = EditorView.GetEditorModel();
-        // File = new FileViewModel(_document);
+        FileView = new FileViewModel(EditorView.GetEditorModel());
     }
 }
 

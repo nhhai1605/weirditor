@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using weirditor.Core;
 using weirditor.Models;
 
@@ -26,17 +27,15 @@ public class EditorViewModel
     
     private void OpenStyleDialog()
     {
-        // var fontDialog = new FontDialog();
-        // fontDialog.DataContext = Format;
-        // fontDialog.ShowDialog();
+        var fontDialog = new FontDialog();
+        fontDialog.DataContext = this;
+        fontDialog.ShowDialog();
     }
 
     private void ToggleWrap()
     {
-        if (Format.Wrap == System.Windows.TextWrapping.Wrap)
-            Format.Wrap = System.Windows.TextWrapping.NoWrap;
-        else
-            Format.Wrap = System.Windows.TextWrapping.Wrap;
+        Format.Wrap = Format.Wrap == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
+        MessageBox.Show("Wrap: " + Format.Wrap);
     }
 }
 
