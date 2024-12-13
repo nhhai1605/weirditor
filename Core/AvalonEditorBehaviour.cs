@@ -18,11 +18,13 @@ public class AvalonEditorBehaviour: Behavior<TextEditor>
 
     protected override void OnAttached()
     {
-        base.OnAttached();
-        if (AssociatedObject != null)
+        base.OnAttached(); 
+        if (AssociatedObject != null) 
+        { 
             AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
+            AssociatedObject.Text = EditorText; 
+        }
     }
-
     protected override void OnDetaching()
     {
         base.OnDetaching();
@@ -52,7 +54,7 @@ public class AvalonEditorBehaviour: Behavior<TextEditor>
             {
                 var caretOffset = editor.CaretOffset;
                 editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                editor.CaretOffset = caretOffset;
+                editor.CaretOffset = editor.Document.TextLength < caretOffset? editor.Document.TextLength : caretOffset;
             }
         }
     }

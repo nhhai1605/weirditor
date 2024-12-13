@@ -46,7 +46,7 @@
             WordWrap="{Binding Format.Wrap}"
         >
             <i:Interaction.Behaviors>
-                <core:AvalonEditorBehaviour EditorText="{Binding Editor.Text, Mode=TwoWay}"/>
+                <core:AvalonEditorBehaviour EditorText="{Binding Editor.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
         </avalonEdit:TextEditor>
     </DockPanel>
