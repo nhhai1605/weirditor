@@ -8,7 +8,7 @@ namespace weirditor.ViewModels;
 
 public class FileViewModel
 {
-    public DocumentModel Document { get; private set; }
+    public DocumentModel Document { get; }
 
     //Toolbar commands
     public ICommand NewCommand { get; }

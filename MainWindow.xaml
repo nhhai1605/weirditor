@@ -24,7 +24,7 @@
                 </MenuItem>
                 <MenuItem Header="Setting" DataContext="{Binding DocumentView}">
                     <MenuItem Header="Format" Command="{Binding FormatCommand}" />
-                    <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}" IsChecked="{Binding Format.Wrap}" IsCheckable="True" />
+                    <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}" IsChecked="{Binding Format.Wrap}" />
                 </MenuItem>
             </Menu.Items>
         </Menu>
@@ -32,6 +32,8 @@
             <TextBlock DockPanel.Dock="Bottom"
                DataContext="{Binding DocumentView}"
                Text="{Binding Document.FilePath}"
+               FontSize="12"
+               FontFamily="{Binding Format.Family}"
             />
             <avalonEdit:TextEditor
                 xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
