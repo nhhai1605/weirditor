@@ -1,16 +1,17 @@
-﻿using weirditor.Core;
+﻿using ICSharpCode.AvalonEdit;
+using weirditor.Core;
 
 namespace weirditor.Models;
 
-public class EditorModel : ObservableObject
+public class DocumentModel : ObservableObject
 {
-    private string _text;
-    public string Text
+    private TextEditor _textEditor;
+    public TextEditor TextEditor
     {
-        get { return _text; }
-        set { OnPropertyChanged(ref _text, value); }
+        get { return _textEditor; }
+        set { OnPropertyChanged(ref _textEditor, value); }
     }
-
+    
     private string _filePath;
     public string FilePath
     {

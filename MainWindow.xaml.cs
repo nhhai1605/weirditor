@@ -1,13 +1,8 @@
-﻿using System.Text;
+﻿using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
+using weirditor.ViewModels;
 
 namespace weirditor;
 
@@ -16,8 +11,11 @@ namespace weirditor;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private MainWindowViewModel MainWindowViewModel;
     public MainWindow()
     {
         InitializeComponent();
+        MainWindowViewModel = (MainWindowViewModel) DataContext;
+        MainWindowViewModel.DocumentView.Document.TextEditor = TextEditor;
     }
 }

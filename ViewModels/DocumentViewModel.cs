@@ -6,16 +6,16 @@ using weirditor.Models;
 
 namespace weirditor.ViewModels;
 
-public class EditorViewModel
+public class DocumentViewModel
 {
     public ICommand FormatCommand { get; }
     public ICommand WrapCommand { get; }
     public FormatModel Format { get; set; }
-    public EditorModel Editor { get; set; }
+    public DocumentModel Document { get; set; }
 
-    public EditorViewModel()
+    public DocumentViewModel()
     {
-        Editor = new EditorModel();
+        Document = new DocumentModel();
         Format = new FormatModel
         {
             Style = FontStyles.Normal,
@@ -28,9 +28,9 @@ public class EditorViewModel
         WrapCommand = new RelayCommand(ToggleWrap);
     }
     
-    public EditorModel GetEditorModel()
+    public DocumentModel GetDocumentModel()
     {
-        return Editor;
+        return Document;
     }
     
     private void OpenStyleDialog()

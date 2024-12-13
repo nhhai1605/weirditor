@@ -1,11 +1,5 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using weirditor.Core;
 using weirditor.Models;
@@ -14,7 +8,7 @@ namespace weirditor.ViewModels;
 
 public class FileViewModel
 {
-    public EditorModel Editor { get; private set; }
+    public DocumentModel Document { get; private set; }
 
     //Toolbar commands
     public ICommand NewCommand { get; }
@@ -22,25 +16,25 @@ public class FileViewModel
     public ICommand SaveAsCommand { get; }
     public ICommand OpenCommand { get; }
 
-    public FileViewModel(EditorModel editor)
+    public FileViewModel(DocumentModel document)
     {
-        Editor = editor;
+        Document = document;
         NewCommand = new RelayCommand(NewFile);
-        SaveCommand = new RelayCommand(SaveFile, () => !Editor.IsSaved);
+        SaveCommand = new RelayCommand(SaveFile, () => !Document.IsSaved);
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
     }
 
     public void NewFile()
     {
-        Editor.FileName = string.Empty;
-        Editor.FilePath = string.Empty;
-        Editor.Text = string.Empty;
+        Document.FileName = string.Empty;
+        Document.FilePath = string.Empty;
+        Document.TextEditor.Text = string.Empty;
     }
 
     private void SaveFile()
     {
-        File.WriteAllText(Editor.FilePath, Editor.Text);
+        File.WriteAllText(Document.FilePath, Document.TextEditor.Text);
     }
 
     private void SaveFileAs()
@@ -50,7 +44,7 @@ public class FileViewModel
         if(saveFileDialog.ShowDialog() == true)
         {
             DockFile(saveFileDialog);
-            File.WriteAllText(saveFileDialog.FileName, Editor.Text);
+            File.WriteAllText(saveFileDialog.FileName, Document.TextEditor.Text);
         }
     }
 
@@ -60,13 +54,13 @@ public class FileViewModel
         if (openFileDialog.ShowDialog() == true)
         {
             DockFile(openFileDialog);
-            Editor.Text = File.ReadAllText(openFileDialog.FileName);
+            Document.TextEditor.Text = File.ReadAllText(openFileDialog.FileName);
         }
     }
 
-    private void DockFile<T>(T dialog) where T : FileDialog
+    public void DockFile<T>(T dialog) where T : FileDialog
     {
-        Editor.FilePath = dialog.FileName;
-        Editor.FileName = dialog.SafeFileName;
+        Document.FilePath = dialog.FileName;
+        Document.FileName = dialog.SafeFileName;
     }
 }
