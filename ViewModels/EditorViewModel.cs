@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using weirditor.Core;
 using weirditor.Models;
 
@@ -15,7 +16,14 @@ public class EditorViewModel
     public EditorViewModel()
     {
         Editor = new EditorModel();
-        Format = new FormatModel();
+        Format = new FormatModel
+        {
+            Style = FontStyles.Normal,
+            Weight = FontWeights.Normal,
+            Family = new FontFamily("Courier New"),
+            Size = 18,
+            Wrap = true
+        };
         FormatCommand = new RelayCommand(OpenStyleDialog);
         WrapCommand = new RelayCommand(ToggleWrap);
     }
@@ -34,8 +42,7 @@ public class EditorViewModel
 
     private void ToggleWrap()
     {
-        Format.Wrap = Format.Wrap == TextWrapping.Wrap ? TextWrapping.NoWrap : TextWrapping.Wrap;
-        MessageBox.Show("Wrap: " + Format.Wrap);
+        Format.Wrap = !Format.Wrap;
     }
 }
 

@@ -27,22 +27,14 @@ public class FormatModel : ObservableObject
         set { OnPropertyChanged(ref _family, value); }
     }
 
-    private TextWrapping _wrap;
-    public TextWrapping Wrap
+    private bool _wrap;
+    public bool Wrap
     {
         get { return _wrap; }
         set
         {
             OnPropertyChanged(ref _wrap, value);
-            IsWrapped = value == TextWrapping.Wrap;
         }
-    }
-
-    private bool _isWrapped;
-    public bool IsWrapped
-    {
-        get { return _isWrapped; }
-        set { OnPropertyChanged(ref _isWrapped, value); }
     }
 
     private double _size;

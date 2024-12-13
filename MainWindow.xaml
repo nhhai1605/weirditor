@@ -17,29 +17,30 @@
         <Menu DockPanel.Dock="Top">
             <Menu.Items>
                 <MenuItem Header="File" DataContext="{Binding FileView}">
-                    <MenuItem Header="New" Command="{Binding NewCommand}"/>
-                    <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
-                    <MenuItem Header="Save" Command="{Binding SaveCommand}"/>
-                    <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}"/>
+                    <MenuItem Header="New" Command="{Binding NewCommand}" />
+                    <MenuItem Header="Open" Command="{Binding OpenCommand}" />
+                    <MenuItem Header="Save" Command="{Binding SaveCommand}" />
+                    <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" />
                 </MenuItem>
                 <MenuItem Header="Setting" DataContext="{Binding EditorView}">
-                    <MenuItem Header="Format" Command="{Binding FormatCommand}"/>
+                    <MenuItem Header="Format" Command="{Binding FormatCommand}" />
+                    <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}" IsChecked="{Binding Format.Wrap}" IsCheckable="True" />
                 </MenuItem>
             </Menu.Items>
         </Menu>
         <TextBlock DockPanel.Dock="Bottom"
                    DataContext="{Binding EditorView}"
                    Text="{Binding Editor.FilePath}" />
-        <TextBox
-            VerticalScrollBarVisibility="Visible"
-            DataContext="{Binding EditorView}"
+        <avalonEdit:TextEditor
+            xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
             FontFamily="{Binding Format.Family}"
+            DataContext="{Binding EditorView}"
             FontSize="{Binding Format.Size}"
             FontStyle="{Binding Format.Style}"
             FontWeight="{Binding Format.Weight}"
-            TextWrapping="{Binding Format.Wrap}"
-            AcceptsReturn="True"
-            AcceptsTab="True"
-            Text="{Binding Editor.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            ShowLineNumbers="True"
+            LineNumbersForeground="Gray"
+            WordWrap="{Binding Format.Wrap}"
+        />
     </DockPanel>
 </Window>

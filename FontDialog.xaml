@@ -79,10 +79,5 @@
                       SelectedItem="{Binding Format.Weight}"
                       SelectedIndex="0"/>
         </StackPanel>
-        
-        <DockPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
-            <TextBlock Margin="0,0,10,0">Word Wrap</TextBlock>
-            <CheckBox IsChecked="{Binding Format.IsWrapped}" Command="{Binding WrapCommand}"/>
-        </DockPanel>
     </Grid>
 </Window>
