@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
 using weirditor.Core;
 using weirditor.Models;

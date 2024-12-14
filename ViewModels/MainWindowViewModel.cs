@@ -7,6 +7,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
+using weirditor.Converters;
 using weirditor.Core;
 using weirditor.Models;
 
@@ -22,6 +23,7 @@ public class MainWindowViewModel
     public ICommand NewCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand SaveAsCommand { get; }
+    public ICommand SaveAllCommand { get; }
     public ICommand OpenCommand { get; }
 
     public MainWindowViewModel()
@@ -41,6 +43,7 @@ public class MainWindowViewModel
         SaveCommand = new RelayCommand(SaveFile, () => EditorTabControl?.SelectedIndex >= 0);
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
+        SaveAllCommand = new RelayCommand(SaveAll);
     }
     private void OpenStyleDialog()
     {
@@ -61,14 +64,18 @@ public class MainWindowViewModel
             ShowLineNumbers = true,
             LineNumbersForeground = Brushes.Gray
         };
+        var documentView = new DocumentViewModel(textEditor);
+
         textEditor.SetBinding(TextEditor.FontFamilyProperty, new Binding("Family") { Source = Format });
         textEditor.SetBinding(TextEditor.FontSizeProperty, new Binding("Size") { Source = Format });
         textEditor.SetBinding(TextEditor.FontStyleProperty, new Binding("Style") { Source = Format });
         textEditor.SetBinding(TextEditor.FontWeightProperty, new Binding("Weight") { Source = Format });
         textEditor.SetBinding(TextEditor.WordWrapProperty, new Binding("Wrap") { Source = Format });
-        
-        var documentView = new DocumentViewModel(textEditor);
-        
+        textEditor.SetBinding(TextEditor.SyntaxHighlightingProperty, new Binding("FilePath")
+        {
+            Source = documentView.Document,
+            Converter = new FileExtensionToHighlightingConverter()
+        });
         if (openFileDialog != null)
         {
             documentView.DockFile(openFileDialog);
@@ -105,11 +112,16 @@ public class MainWindowViewModel
         DockPanel dockPanel = new DockPanel();
         dockPanel.Children.Add(footer);
         dockPanel.Children.Add(textEditor);
-
+        
         TabItem tabItem = new TabItem
         {
             IsSelected = true
         };
+        
+        //Add tabItem before adding CloseTab()
+        EditorTabControl?.Items.Add(tabItem);
+        DocumentViewList.Add(documentView);
+        
         TextBlock headerTextBlock = new TextBlock
         {
             Text = openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText,
@@ -153,6 +165,8 @@ public class MainWindowViewModel
             }
         };
         headerTextBlock.SetBinding(TextBlock.TextProperty, new Binding("FileName") { Source = documentView.Document });
+        
+
         StackPanel header = new StackPanel
         {
             Orientation = Orientation.Horizontal,
@@ -166,7 +180,7 @@ public class MainWindowViewModel
                     Padding = new Thickness(0),
                     BorderThickness = new Thickness(0),
                     Background = Brushes.Transparent,
-                    Command = new RelayCommand(() => EditorTabControl?.Items.Remove(tabItem))
+                    Command = new RelayCommand(() => CloseTab(tabItem))
                 }
             },
         };
@@ -175,15 +189,11 @@ public class MainWindowViewModel
         {
             if (e.ChangedButton == MouseButton.Middle)
             {
-                EditorTabControl?.Items.Remove(tabItem);
+                CloseTab(tabItem);
             }
         };
         tabItem.Header = header;
         tabItem.Content = dockPanel;
-        
-        
-        EditorTabControl?.Items.Add(tabItem);
-        DocumentViewList.Add(documentView);
         
         // Use this to wait for the UI to update before focusing the text editor
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -191,7 +201,22 @@ public class MainWindowViewModel
             documentView.TextEditor.Focus();
         }), System.Windows.Threading.DispatcherPriority.Input);
     }
-
+    
+    private void CloseTab(TabItem tabItem)
+    {
+        var documentView = DocumentViewList[EditorTabControl!.Items.IndexOf(tabItem)];
+        if (!documentView.Document.IsSaved)
+        {
+            MessageBoxResult result = MessageBox.Show("Do you want to save changes?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                SaveFile();
+            }
+        }
+        EditorTabControl?.Items.Remove(tabItem);
+        DocumentViewList.Remove(documentView);
+    }
+    
     private void SaveFile()
     {
         if (EditorTabControl?.SelectedIndex >= 0) //Make sure there is a selected tab
@@ -201,6 +226,18 @@ public class MainWindowViewModel
                 SaveFileAs();
             }
             else
+            {
+                documentView.TextEditor.Save(documentView.Document.FilePath);
+                documentView.OnSavedDocument();
+            }
+        }
+    }
+
+    private void SaveAll()
+    {
+        foreach (var documentView in DocumentViewList)
+        {
+            if (!documentView.Document.IsSaved)
             {
                 documentView.TextEditor.Save(documentView.Document.FilePath);
                 documentView.OnSavedDocument();
