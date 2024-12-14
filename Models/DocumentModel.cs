@@ -26,13 +26,13 @@ public class DocumentModel : ObservableObject
         set { OnPropertyChanged(ref _initText, value); }
     }
 
+    private bool _isNew;
     public bool IsNew
     {
-        get
-        {
-            return string.IsNullOrEmpty(FileName) || string.IsNullOrEmpty(FilePath);
-        }
+        get { return _isNew; }
+        set { OnPropertyChanged(ref _isNew, value); }
     }
+    
     private bool _isSaved;
     public bool IsSaved
     {

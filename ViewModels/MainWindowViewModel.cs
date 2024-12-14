@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
 using weirditor.Core;
 using weirditor.Models;
@@ -55,13 +56,6 @@ public class MainWindowViewModel
     
     public void NewFile(OpenFileDialog? openFileDialog)   
     {
-        TextBlock footer = new TextBlock
-        {
-            Text = openFileDialog != null ? openFileDialog.FileName : Config.NewFileText,
-            FontSize = Config.DefaultFooterFontSize
-        };
-        footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
-
         TextEditor textEditor = new TextEditor
         {
             ShowLineNumbers = true,
@@ -74,14 +68,38 @@ public class MainWindowViewModel
         textEditor.SetBinding(TextEditor.WordWrapProperty, new Binding("Wrap") { Source = Format });
         
         var documentView = new DocumentViewModel(textEditor);
+        
         if (openFileDialog != null)
         {
-            DockFile(openFileDialog, documentView.Document);
+            documentView.DockFile(openFileDialog);
+            documentView.Document.IsNew = false;
             documentView.Document.IsSaved = true;
-            textEditor.Text = File.ReadAllText(openFileDialog.FileName);
+            var fileName = openFileDialog.FileName;
+            textEditor.Load(fileName);
             documentView.Document.InitText = textEditor.Text;
             textEditor.CaretOffset = textEditor.Text.Length;
+            textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(fileName));
         }
+        else
+        {
+            documentView.Document.IsNew  = true;
+            documentView.Document.IsSaved = true;
+            documentView.Document.FileName = Config.NewFileText;
+            //TODO: Will change if create file in directory from file browser
+            documentView.Document.FilePath = Config.NewFileText;
+        }
+        
+        textEditor.TextChanged += (_, _) =>
+        {
+            documentView.Document.IsSaved = textEditor.Text == documentView.Document.InitText;
+        };
+        
+        TextBlock footer = new TextBlock
+        {
+            FontSize = Config.DefaultFooterFontSize
+        };
+        footer.SetBinding(TextBlock.TextProperty, new Binding("FilePath") { Source = documentView.Document });
+        footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
         
         DockPanel.SetDock(footer, Dock.Bottom);
         DockPanel dockPanel = new DockPanel();
@@ -92,54 +110,55 @@ public class MainWindowViewModel
         {
             IsSelected = true
         };
+        TextBlock headerTextBlock = new TextBlock
+        {
+            Text = openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText,
+            Style = new Style(typeof(TextBlock))
+            {
+                Triggers =
+                {
+                    new DataTrigger
+                    {
+                        Binding = new Binding("IsSaved")
+                        {
+                            Source = documentView.Document,
+                        },
+                        Value = false,
+                        Setters =
+                        {
+                            new Setter(TextBlock.ForegroundProperty, Brushes.Orange),
+                            new Setter(TextBlock.FontStyleProperty, FontStyles.Normal)
+                        }
+                    },
+                    new DataTrigger
+                    {
+                        Binding = new Binding("IsNew")
+                        {
+                            Source = documentView.Document,
+                        },
+                        Value = true,
+                        Setters =
+                        {
+                            new Setter(TextBlock.ForegroundProperty, Brushes.Green),
+                            new Setter(TextBlock.FontStyleProperty, FontStyles.Italic)
+                        }
+                    },
+
+                },
+                Setters =
+                {
+                    new Setter(TextBlock.ForegroundProperty, Brushes.Black),
+                    new Setter(TextBlock.FontStyleProperty, FontStyles.Normal)
+                }
+            }
+        };
+        headerTextBlock.SetBinding(TextBlock.TextProperty, new Binding("FileName") { Source = documentView.Document });
         StackPanel header = new StackPanel
         {
             Orientation = Orientation.Horizontal,
             Children =
             {
-                new TextBlock
-                {
-                    Text = openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText,
-                    // Foreground = openFileDialog != null ? Brushes.Black : Brushes.Green,
-                    FontStyle = openFileDialog != null ? FontStyles.Normal : FontStyles.Italic,
-                    Style = new Style(typeof(TextBlock))
-                    {
-                        Triggers =
-                        {
-                            // Trigger for Document.IsSaved
-                            new DataTrigger
-                            {
-                                Binding = new Binding("IsSaved")
-                                {
-                                    Source = documentView.Document,
-                                },
-                                Value = false,
-                                Setters =
-                                {
-                                    new Setter(TextBlock.ForegroundProperty, Brushes.Orange)
-                                }
-                            },
-                            // Trigger for Document.IsNew
-                            new DataTrigger
-                            {
-                                Binding = new Binding("IsNew")
-                                {
-                                    Source = documentView.Document,
-                                },
-                                Value = true,
-                                Setters =
-                                {
-                                    new Setter(TextBlock.ForegroundProperty, Brushes.Green)
-                                }
-                            },
-                            
-                        },
-                        Setters =
-                        {
-                            new Setter(TextBlock.ForegroundProperty, Brushes.Black)
-                        }
-                    }
-                },
+                headerTextBlock,
                 new Button
                 {
                     Content = " X ",
@@ -171,14 +190,6 @@ public class MainWindowViewModel
         {
             documentView.TextEditor.Focus();
         }), System.Windows.Threading.DispatcherPriority.Input);
-        
-        textEditor.TextChanged += (_, _) =>
-        {
-            if(!documentView.Document.IsNew)
-            {
-                documentView.Document.IsSaved = textEditor.Text == documentView.Document.InitText;
-            }
-        };
     }
 
     private void SaveFile()
@@ -186,26 +197,27 @@ public class MainWindowViewModel
         if (EditorTabControl?.SelectedIndex >= 0) //Make sure there is a selected tab
         {
             DocumentViewModel documentView = DocumentViewList[EditorTabControl.SelectedIndex];
-            if (documentView.Document.IsNew)
-            {
+            if (documentView.Document.IsNew) {
                 SaveFileAs();
             }
             else
             {
-                File.WriteAllText(documentView.Document.FilePath, documentView.TextEditor.Text);
+                documentView.TextEditor.Save(documentView.Document.FilePath);
+                documentView.OnSavedDocument();
             }
-            
         }
     }
 
     private void SaveFileAs()
     {
-        var saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "Text File (*.txt)|*.txt";
-        if(saveFileDialog.ShowDialog() == true)
+        SaveFileDialog dialog = new SaveFileDialog();
+        dialog.DefaultExt = ".txt";
+        if (dialog.ShowDialog() == true) 
         {
-            // DockFile(saveFileDialog);
-            File.WriteAllText(saveFileDialog.FileName, DocumentViewList[EditorTabControl!.SelectedIndex].TextEditor.Text);
+            var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
+            documentView.DockFile(dialog);
+            documentView.TextEditor.Save(dialog.FileName);
+            documentView.OnSavedDocument();
         }
     }
 
@@ -216,12 +228,6 @@ public class MainWindowViewModel
         {
             NewFile(openFileDialog);
         }
-    }
-    
-    private void DockFile(OpenFileDialog dialog, DocumentModel document)
-    {
-        document.FilePath = dialog.FileName;
-        document.FileName = dialog.SafeFileName;
     }
     
 }
