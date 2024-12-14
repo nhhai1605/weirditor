@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         MainWindowViewModel = (MainWindowViewModel) DataContext;
-        MainWindowViewModel.DocumentView.Document.TextEditor = TextEditor;
+        MainWindowViewModel.EditorTabControl = EditorTabControl;
+        // MainWindowViewModel.DocumentView.Document.TextEditor = TextEditor;
     }
 }

@@ -16,7 +16,7 @@
     <DockPanel Margin="1">
         <Menu DockPanel.Dock="Top">
             <Menu.Items>
-                <MenuItem Header="File" DataContext="{Binding FileView}">
+                <MenuItem Header="File">
                     <MenuItem Header="New" Command="{Binding NewCommand}" />
                     <MenuItem Header="Open" Command="{Binding OpenCommand}" />
                     <MenuItem Header="Save" Command="{Binding SaveCommand}" />
@@ -28,30 +28,32 @@
                 </MenuItem>
             </Menu.Items>
         </Menu>
-        <TextBlock DockPanel.Dock="Bottom"
-           Text="{Binding DocumentView.Document.FilePath}"
-           FontSize="12"
-           FontFamily="{Binding Format.Family}"
-        />
         <TabControl Name="EditorTabControl">
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock DataContext="{Binding DocumentView}" Text="{Binding Document.FileName, StringFormat='{}{0} •', TargetNullValue='Untitled •'}" Foreground="Green" FontStyle="Italic"/>
-                    </StackPanel>
-                </TabItem.Header>
-                <avalonEdit:TextEditor
-                    xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-                    Name="TextEditor"
-                    FontFamily="{Binding Format.Family}"
-                    FontSize="{Binding Format.Size}"
-                    FontStyle="{Binding Format.Style}"
-                    FontWeight="{Binding Format.Weight}"
-                    ShowLineNumbers="True"
-                    LineNumbersForeground="Gray"
-                    WordWrap="{Binding Format.Wrap}"
-                />
-            </TabItem>
+            <!-- <TabItem> -->
+            <!--     <TabItem.Header> -->
+            <!--         <StackPanel Orientation="Horizontal"> -->
+            <!--             <TextBlock DataContext="{Binding DocumentView}" Text="{Binding Document.FileName, StringFormat='{}{0} •', TargetNullValue='Untitled •'}" Foreground="Green" FontStyle="Italic"/> -->
+            <!--         </StackPanel> -->
+            <!--     </TabItem.Header> -->
+            <!--     <DockPanel> -->
+            <!--         <TextBlock DockPanel.Dock="Bottom" -->
+            <!--             Text="" -->
+            <!--             FontSize="12" -->
+            <!--             FontFamily="{Binding Format.Family}" -->
+            <!--         /> -->
+            <!--         <avalonEdit:TextEditor -->
+            <!--             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit" -->
+            <!--             Name="TextEditor" -->
+            <!--             FontFamily="{Binding Format.Family}" -->
+            <!--             FontSize="{Binding Format.Size}" -->
+            <!--             FontStyle="{Binding Format.Style}" -->
+            <!--             FontWeight="{Binding Format.Weight}" -->
+            <!--             ShowLineNumbers="True" -->
+            <!--             LineNumbersForeground="Gray" -->
+            <!--             WordWrap="{Binding Format.Wrap}" -->
+            <!--         /> -->
+            <!--     </DockPanel> -->
+            <!-- </TabItem> -->
         </TabControl>
     </DockPanel>
 </Window>
