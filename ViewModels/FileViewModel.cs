@@ -20,7 +20,7 @@ public class FileViewModel
     {
         Document = document;
         NewCommand = new RelayCommand(NewFile);
-        SaveCommand = new RelayCommand(SaveFile, () => !Document.IsSaved);
+        SaveCommand = new RelayCommand(SaveFile);
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
     }
