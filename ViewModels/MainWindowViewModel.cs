@@ -36,7 +36,7 @@ public class MainWindowViewModel
         };
         FormatCommand = new RelayCommand(OpenStyleDialog);
         WrapCommand = new RelayCommand(ToggleWrap);
-        NewCommand = new RelayCommand(() => NewFile(Config.NewFileText));
+        NewCommand = new RelayCommand(() => NewFile(null));
         SaveCommand = new RelayCommand(SaveFile, () => EditorTabControl?.SelectedIndex >= 0);
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
@@ -53,18 +53,17 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public DocumentViewModel NewFile(string FileName)   
+    public DocumentViewModel NewFile(OpenFileDialog? openFileDialog)   
     {
         TextBlock footer = new TextBlock
         {
-            Text = FileName,
+            Text = $"{(openFileDialog != null ? openFileDialog.FileName : Config.NewFileText)}•",
             FontSize = Config.DefaultFooterFontSize
         };
         footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
 
         TextEditor textEditor = new TextEditor
         {
-            Name = "TextEditor" + EditorTabControl?.Items.Count,
             ShowLineNumbers = true,
             LineNumbersForeground = Brushes.Gray
         };
@@ -90,7 +89,7 @@ public class MainWindowViewModel
             {
                 new TextBlock
                 {
-                    Text = FileName,
+                    Text = $"{(openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText)}•",
                     Foreground = Brushes.Green,
                     FontStyle = FontStyles.Italic
                 },
@@ -160,7 +159,7 @@ public class MainWindowViewModel
         var openFileDialog = new OpenFileDialog();
         if (openFileDialog.ShowDialog() == true)
         {
-            DocumentViewModel documentView = NewFile(openFileDialog.FileName);
+            DocumentViewModel documentView = NewFile(openFileDialog);
             TextEditor textEditor = documentView.TextEditor;
             textEditor.Text = File.ReadAllText(openFileDialog.FileName);
             textEditor.CaretOffset = textEditor.Text.Length;
