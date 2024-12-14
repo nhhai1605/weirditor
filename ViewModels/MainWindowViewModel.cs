@@ -53,11 +53,11 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public DocumentViewModel NewFile(OpenFileDialog? openFileDialog)   
+    public void NewFile(OpenFileDialog? openFileDialog)   
     {
         TextBlock footer = new TextBlock
         {
-            Text = $"{(openFileDialog != null ? openFileDialog.FileName : Config.NewFileText)}•",
+            Text = openFileDialog != null ? openFileDialog.FileName : Config.NewFileText,
             FontSize = Config.DefaultFooterFontSize
         };
         footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
@@ -72,7 +72,17 @@ public class MainWindowViewModel
         textEditor.SetBinding(TextEditor.FontStyleProperty, new Binding("Style") { Source = Format });
         textEditor.SetBinding(TextEditor.FontWeightProperty, new Binding("Weight") { Source = Format });
         textEditor.SetBinding(TextEditor.WordWrapProperty, new Binding("Wrap") { Source = Format });
-
+        
+        var documentView = new DocumentViewModel(textEditor);
+        if (openFileDialog != null)
+        {
+            DockFile(openFileDialog, documentView.Document);
+            documentView.Document.IsSaved = true;
+            textEditor.Text = File.ReadAllText(openFileDialog.FileName);
+            documentView.Document.InitText = textEditor.Text;
+            textEditor.CaretOffset = textEditor.Text.Length;
+        }
+        
         DockPanel.SetDock(footer, Dock.Bottom);
         DockPanel dockPanel = new DockPanel();
         dockPanel.Children.Add(footer);
@@ -89,9 +99,46 @@ public class MainWindowViewModel
             {
                 new TextBlock
                 {
-                    Text = $"{(openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText)}•",
-                    Foreground = Brushes.Green,
-                    FontStyle = FontStyles.Italic
+                    Text = openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText,
+                    // Foreground = openFileDialog != null ? Brushes.Black : Brushes.Green,
+                    FontStyle = openFileDialog != null ? FontStyles.Normal : FontStyles.Italic,
+                    Style = new Style(typeof(TextBlock))
+                    {
+                        Triggers =
+                        {
+                            // Trigger for Document.IsSaved
+                            new DataTrigger
+                            {
+                                Binding = new Binding("IsSaved")
+                                {
+                                    Source = documentView.Document,
+                                },
+                                Value = false,
+                                Setters =
+                                {
+                                    new Setter(TextBlock.ForegroundProperty, Brushes.Orange)
+                                }
+                            },
+                            // Trigger for Document.IsNew
+                            new DataTrigger
+                            {
+                                Binding = new Binding("IsNew")
+                                {
+                                    Source = documentView.Document,
+                                },
+                                Value = true,
+                                Setters =
+                                {
+                                    new Setter(TextBlock.ForegroundProperty, Brushes.Green)
+                                }
+                            },
+                            
+                        },
+                        Setters =
+                        {
+                            new Setter(TextBlock.ForegroundProperty, Brushes.Black)
+                        }
+                    }
                 },
                 new Button
                 {
@@ -114,16 +161,24 @@ public class MainWindowViewModel
         };
         tabItem.Header = header;
         tabItem.Content = dockPanel;
-
+        
+        
         EditorTabControl?.Items.Add(tabItem);
-        var documentView = new DocumentViewModel(textEditor);
         DocumentViewList.Add(documentView);
+        
         // Use this to wait for the UI to update before focusing the text editor
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
         {
             documentView.TextEditor.Focus();
         }), System.Windows.Threading.DispatcherPriority.Input);
-        return documentView;
+        
+        textEditor.TextChanged += (_, _) =>
+        {
+            if(!documentView.Document.IsNew)
+            {
+                documentView.Document.IsSaved = textEditor.Text == documentView.Document.InitText;
+            }
+        };
     }
 
     private void SaveFile()
@@ -149,7 +204,7 @@ public class MainWindowViewModel
         saveFileDialog.Filter = "Text File (*.txt)|*.txt";
         if(saveFileDialog.ShowDialog() == true)
         {
-            DockFile(saveFileDialog);
+            // DockFile(saveFileDialog);
             File.WriteAllText(saveFileDialog.FileName, DocumentViewList[EditorTabControl!.SelectedIndex].TextEditor.Text);
         }
     }
@@ -159,18 +214,15 @@ public class MainWindowViewModel
         var openFileDialog = new OpenFileDialog();
         if (openFileDialog.ShowDialog() == true)
         {
-            DocumentViewModel documentView = NewFile(openFileDialog);
-            TextEditor textEditor = documentView.TextEditor;
-            textEditor.Text = File.ReadAllText(openFileDialog.FileName);
-            textEditor.CaretOffset = textEditor.Text.Length;
-            DockFile(openFileDialog);
+            NewFile(openFileDialog);
         }
     }
-
-    public void DockFile<T>(T dialog) where T : FileDialog
+    
+    private void DockFile(OpenFileDialog dialog, DocumentModel document)
     {
-        DocumentViewList[EditorTabControl!.SelectedIndex].Document.FilePath = dialog.FileName;
-        DocumentViewList[EditorTabControl!.SelectedIndex].Document.FileName = dialog.SafeFileName;
+        document.FilePath = dialog.FileName;
+        document.FileName = dialog.SafeFileName;
     }
+    
 }
 

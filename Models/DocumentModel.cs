@@ -5,13 +5,6 @@ namespace weirditor.Models;
 
 public class DocumentModel : ObservableObject
 {
-    // private TextEditor _textEditor;
-    // public TextEditor TextEditor
-    // {
-    //     get { return _textEditor; }
-    //     set { OnPropertyChanged(ref _textEditor, value); }
-    // }
-    
     private string _filePath;
     public string FilePath
     {
@@ -24,6 +17,13 @@ public class DocumentModel : ObservableObject
     {
         get { return _fileName; }
         set { OnPropertyChanged(ref _fileName, value); }
+    }
+    
+    private string _initText;
+    public string InitText
+    {
+        get { return _initText; }
+        set { OnPropertyChanged(ref _initText, value); }
     }
 
     public bool IsNew
