@@ -15,12 +15,6 @@ public class MainWindowViewModel
 {
     public TabControl? EditorTabControl { get; set; }
     public List<DocumentViewModel> DocumentViewList { get; set; }
-    public int? FocusedDocumentIndex { get; set; }
-    public DocumentViewModel? FocusedDocumentView
-    {
-        get => FocusedDocumentIndex.HasValue ? DocumentViewList[FocusedDocumentIndex.Value] : null;
-        set => FocusedDocumentIndex = value != null ? DocumentViewList.IndexOf(value) : (int?)null;
-    }
     public FormatModel Format { get; set; }
     public ICommand FormatCommand { get; }
     public ICommand WrapCommand { get; }
@@ -42,8 +36,8 @@ public class MainWindowViewModel
         };
         FormatCommand = new RelayCommand(OpenStyleDialog);
         WrapCommand = new RelayCommand(ToggleWrap);
-        NewCommand = new RelayCommand(NewFile);
-        SaveCommand = new RelayCommand(SaveFile);
+        NewCommand = new RelayCommand(() => NewFile(Config.NewFileText));
+        SaveCommand = new RelayCommand(SaveFile, () => EditorTabControl?.SelectedIndex >= 0);
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
     }
@@ -59,22 +53,18 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public void NewFile()   
+    public DocumentViewModel NewFile(string FileName)   
     {
-        var documentView = new DocumentViewModel();
-        DocumentViewList.Add(documentView);
-        FocusedDocumentView = documentView;
-
         TextBlock footer = new TextBlock
         {
-            Text = Config.NewFileText,
+            Text = FileName,
             FontSize = Config.DefaultFooterFontSize
         };
         footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
 
         TextEditor textEditor = new TextEditor
         {
-            Name = "TextEditor" + FocusedDocumentIndex,
+            Name = "TextEditor" + EditorTabControl?.Items.Count,
             ShowLineNumbers = true,
             LineNumbersForeground = Brushes.Gray
         };
@@ -93,50 +83,95 @@ public class MainWindowViewModel
         {
             IsSelected = true
         };
-
-        TextBlock headerTextBlock = new TextBlock
+        StackPanel header = new StackPanel
         {
-            Text = Config.NewFileText,
-            Foreground = Brushes.Green,
-            FontStyle = FontStyles.Italic
+            Orientation = Orientation.Horizontal,
+            Children =
+            {
+                new TextBlock
+                {
+                    Text = FileName,
+                    Foreground = Brushes.Green,
+                    FontStyle = FontStyles.Italic
+                },
+                new Button
+                {
+                    Content = " X ",
+                    Margin = new Thickness(10, 0, 0, 0),
+                    Padding = new Thickness(0),
+                    BorderThickness = new Thickness(0),
+                    Background = Brushes.Transparent,
+                    Command = new RelayCommand(() => EditorTabControl?.Items.Remove(tabItem))
+                }
+            },
         };
-
-        tabItem.Header = headerTextBlock;
+        // Close tab with middle mouse button
+        header.MouseUp += (_, e) =>
+        {
+            if (e.ChangedButton == MouseButton.Middle)
+            {
+                EditorTabControl?.Items.Remove(tabItem);
+            }
+        };
+        tabItem.Header = header;
         tabItem.Content = dockPanel;
 
         EditorTabControl?.Items.Add(tabItem);
+        var documentView = new DocumentViewModel(textEditor);
+        DocumentViewList.Add(documentView);
+        // Use this to wait for the UI to update before focusing the text editor
+        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            documentView.TextEditor.Focus();
+        }), System.Windows.Threading.DispatcherPriority.Input);
+        return documentView;
     }
 
     private void SaveFile()
     {
-        // File.WriteAllText(FocusedDocumentView.Document.FilePath, FocusedDocumentView.Document.TextEditor.Text);
+        if (EditorTabControl?.SelectedIndex >= 0) //Make sure there is a selected tab
+        {
+            DocumentViewModel documentView = DocumentViewList[EditorTabControl.SelectedIndex];
+            if (documentView.Document.IsNew)
+            {
+                SaveFileAs();
+            }
+            else
+            {
+                File.WriteAllText(documentView.Document.FilePath, documentView.TextEditor.Text);
+            }
+            
+        }
     }
 
     private void SaveFileAs()
     {
-        // var saveFileDialog = new SaveFileDialog();
-        // saveFileDialog.Filter = "Text File (*.txt)|*.txt";
-        // if(saveFileDialog.ShowDialog() == true)
-        // {
-        //     DockFile(saveFileDialog);
-        //     File.WriteAllText(saveFileDialog.FileName, FocusedDocumentView.Document.TextEditor.Text);
-        // }
+        var saveFileDialog = new SaveFileDialog();
+        saveFileDialog.Filter = "Text File (*.txt)|*.txt";
+        if(saveFileDialog.ShowDialog() == true)
+        {
+            DockFile(saveFileDialog);
+            File.WriteAllText(saveFileDialog.FileName, DocumentViewList[EditorTabControl!.SelectedIndex].TextEditor.Text);
+        }
     }
 
     private void OpenFile()
     {
-        // var openFileDialog = new OpenFileDialog();
-        // if (openFileDialog.ShowDialog() == true)
-        // {
-        //     DockFile(openFileDialog);
-        //     FocusedDocumentView.Document.TextEditor.Text = File.ReadAllText(openFileDialog.FileName);
-        // }
+        var openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == true)
+        {
+            DocumentViewModel documentView = NewFile(openFileDialog.FileName);
+            TextEditor textEditor = documentView.TextEditor;
+            textEditor.Text = File.ReadAllText(openFileDialog.FileName);
+            textEditor.CaretOffset = textEditor.Text.Length;
+            DockFile(openFileDialog);
+        }
     }
 
     public void DockFile<T>(T dialog) where T : FileDialog
     {
-        // FocusedDocumentView.Document.FilePath = dialog.FileName;
-        // FocusedDocumentView.Document.FileName = dialog.SafeFileName;
+        DocumentViewList[EditorTabControl!.SelectedIndex].Document.FilePath = dialog.FileName;
+        DocumentViewList[EditorTabControl!.SelectedIndex].Document.FileName = dialog.SafeFileName;
     }
 }
 
