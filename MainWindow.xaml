@@ -6,11 +6,15 @@
         xmlns:local="clr-namespace:weirditor"
         xmlns:viewModels="clr-namespace:weirditor.ViewModels"
         xmlns:models="clr-namespace:weirditor.Models"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="weirditor"
         Height="600"
         Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
     </Window.DataContext>
@@ -20,6 +24,7 @@
         <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding LoadParentDirectoryCommand}"/>
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"/>
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Key="E" Modifiers="Control" Command="{Binding ExplorerVisibilityCommand}"/>
     </Window.InputBindings> 
     <DockPanel Margin="1">
         <Menu DockPanel.Dock="Top">
@@ -31,6 +36,9 @@
                     <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                     <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S" />
                 </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}" InputGestureText="Ctrl+E" IsChecked="{Binding ExploreView.ExplorerSetting.IsExplorerVisible}" />
+                </MenuItem>
                 <MenuItem Header="Setting">
                     <MenuItem Header="Format" Command="{Binding FormatCommand}" />
                     <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}" IsChecked="{Binding Format.Wrap}" />
@@ -39,30 +47,39 @@
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" /> <!-- Explorer -->
-                <ColumnDefinition Width="*" /> <!-- Editor -->
+                <ColumnDefinition Width="Auto" /> <!-- Explorer --> <!-- Column size based on its content -->
+                <ColumnDefinition Width="*" /> <!-- Editor --> <!-- The rest of the space -->
             </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0">
+            <DockPanel Grid.Column="0" Width="200" Visibility="{Binding ExploreView.ExplorerSetting.IsExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <!-- ParentExplorer Name -->
                 <ContentControl DockPanel.Dock="Top" Margin="0,2">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Setter Property="Content">
                                 <Setter.Value>
-                                    <TextBlock 
-                                        Text="{Binding ParentExplorer.Name}" 
-                                        FontWeight="Bold" 
-                                        FontSize="14" 
-                                    />
+                                    <DockPanel>
+                                        <TextBlock 
+                                            Text="Test" 
+                                            FontWeight="Bold" 
+                                            FontSize="14" 
+                                            Margin="4,0"
+                                            VerticalAlignment="Center" 
+                                        />
+                                        <Button Command="{Binding LoadParentDirectoryCommand}" Width="20" Height="20" HorizontalAlignment="Right">
+                                            <Button.Content>
+                                                <fa:FontAwesome Icon="Folder"/>
+                                            </Button.Content>
+                                        </Button>
+                                    </DockPanel>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
                                 <!-- Show Button if ParentExplorer.Name is empty -->
-                                <DataTrigger Binding="{Binding ParentExplorer.Name}" Value="">
+                                <DataTrigger Binding="{Binding ExploreView.ParentExplorer.Name}" Value="">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <Button 
+                                            <Button
                                                 Content="Open Folder"
                                                 Command="{Binding LoadParentDirectoryCommand}"
                                             />
@@ -75,7 +92,7 @@
                 </ContentControl>
 
                 <!-- Explorer -->
-                <TreeView ItemsSource="{Binding ParentExplorer.Children}">
+                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Name}" />

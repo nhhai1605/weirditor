@@ -17,7 +17,7 @@ public class MainWindowViewModel
 {
     public TabControl? EditorTabControl { get; set; }
     public List<DocumentViewModel> DocumentViewList { get; set; }
-    public ExplorerModel ParentExplorer { get; set; }
+    public ExplorerViewModel ExploreView { get; set; }
     public FormatModel Format { get; set; }
     public ICommand FormatCommand { get; }
     public ICommand WrapCommand { get; }
@@ -27,11 +27,12 @@ public class MainWindowViewModel
     public ICommand SaveAllCommand { get; }
     public ICommand OpenCommand { get; }
     public ICommand LoadParentDirectoryCommand { get; }
-
+    public ICommand ExplorerVisibilityCommand { get; } 
+    
     public MainWindowViewModel()
     {
         DocumentViewList = new List<DocumentViewModel>();
-        ParentExplorer = new ExplorerModel(String.Empty);
+        ExploreView = new ExplorerViewModel();
         Format = new FormatModel
         {
             Style = Config.DefaultFontStyle,
@@ -48,6 +49,7 @@ public class MainWindowViewModel
         OpenCommand = new RelayCommand(OpenFile);
         SaveAllCommand = new RelayCommand(SaveAll);
         LoadParentDirectoryCommand = new RelayCommand(LoadParentDirectory);
+        ExplorerVisibilityCommand = new RelayCommand(ExplorerVisibilityControl);
     }
     private void OpenStyleDialog()
     {
@@ -277,8 +279,13 @@ public class MainWindowViewModel
         var openFolderDialog = new OpenFolderDialog();
         if (openFolderDialog.ShowDialog() == true)
         {
-            ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
+            ExploreView.ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
         }
+    } 
+    
+    public void ExplorerVisibilityControl()
+    {
+        ExploreView.ExplorerSetting.IsExplorerVisible = !ExploreView.ExplorerSetting.IsExplorerVisible;
     }
     
 }
