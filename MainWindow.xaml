@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:weirditor"
         xmlns:viewModels="clr-namespace:weirditor.ViewModels"
+        xmlns:models="clr-namespace:weirditor.Models"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="weirditor"
@@ -16,15 +17,17 @@
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}"/>
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenCommand}"/>
+        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding LoadParentDirectoryCommand}"/>
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"/>
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAsCommand}"/>
-    </Window.InputBindings>
+    </Window.InputBindings> 
     <DockPanel Margin="1">
         <Menu DockPanel.Dock="Top">
             <Menu.Items>
                 <MenuItem Header="File">
                     <MenuItem Header="New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N" />
                     <MenuItem Header="Open" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
+                    <MenuItem Header="Open Folder" Command="{Binding LoadParentDirectoryCommand}" InputGestureText="Ctrl+Shift+O" />
                     <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                     <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S" />
                 </MenuItem>
@@ -34,32 +37,36 @@
                 </MenuItem>
             </Menu.Items>
         </Menu>
-        <TabControl Name="EditorTabControl">
-            <!-- <TabItem> -->
-            <!--     <TabItem.Header> -->
-            <!--         <StackPanel Orientation="Horizontal"> -->
-            <!--             <TextBlock DataContext="{Binding DocumentView}" Text="{Binding Document.FileName, StringFormat='{}{0} •', TargetNullValue='Untitled •'}" Foreground="Green" FontStyle="Italic"/> -->
-            <!--         </StackPanel> -->
-            <!--     </TabItem.Header> -->
-            <!--     <DockPanel> -->
-            <!--         <TextBlock DockPanel.Dock="Bottom" -->
-            <!--             Text="" -->
-            <!--             FontSize="12" -->
-            <!--             FontFamily="{Binding Format.Family}" -->
-            <!--         /> -->
-            <!--         <avalonEdit:TextEditor -->
-            <!--             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit" -->
-            <!--             Name="TextEditor" -->
-            <!--             FontFamily="{Binding Format.Family}" -->
-            <!--             FontSize="{Binding Format.Size}" -->
-            <!--             FontStyle="{Binding Format.Style}" -->
-            <!--             FontWeight="{Binding Format.Weight}" -->
-            <!--             ShowLineNumbers="True" -->
-            <!--             LineNumbersForeground="Gray" -->
-            <!--             WordWrap="{Binding Format.Wrap}" -->
-            <!--         /> -->
-            <!--     </DockPanel> -->
-            <!-- </TabItem> -->
-        </TabControl>
+        <!-- Main Layout -->
+        <Grid>
+            <!-- Define Columns for File Explorer and Editor -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" /> <!-- File Explorer -->
+                <ColumnDefinition Width="5" /> <!-- Splitter -->
+                <ColumnDefinition Width="*" /> <!-- Editor -->
+            </Grid.ColumnDefinitions>
+
+            <!-- File Explorer -->
+            <TreeView 
+                Grid.Column="0" 
+                ItemsSource="{Binding ParentExplorer.Children}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding  Children }">
+                        <TextBlock Text="{Binding Name}" />
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="Gray"
+                          ResizeBehavior="PreviousAndNext" />
+
+            <!-- Editor -->
+            <TabControl Grid.Column="2" Name="EditorTabControl" />
+        </Grid>
     </DockPanel>
 </Window>

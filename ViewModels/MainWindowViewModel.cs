@@ -17,6 +17,7 @@ public class MainWindowViewModel
 {
     public TabControl? EditorTabControl { get; set; }
     public List<DocumentViewModel> DocumentViewList { get; set; }
+    public ExplorerModel ParentExplorer { get; set; }
     public FormatModel Format { get; set; }
     public ICommand FormatCommand { get; }
     public ICommand WrapCommand { get; }
@@ -25,10 +26,12 @@ public class MainWindowViewModel
     public ICommand SaveAsCommand { get; }
     public ICommand SaveAllCommand { get; }
     public ICommand OpenCommand { get; }
+    public ICommand LoadParentDirectoryCommand { get; }
 
     public MainWindowViewModel()
     {
         DocumentViewList = new List<DocumentViewModel>();
+        ParentExplorer = new ExplorerModel(String.Empty);
         Format = new FormatModel
         {
             Style = Config.DefaultFontStyle,
@@ -44,6 +47,7 @@ public class MainWindowViewModel
         SaveAsCommand = new RelayCommand(SaveFileAs);
         OpenCommand = new RelayCommand(OpenFile);
         SaveAllCommand = new RelayCommand(SaveAll);
+        LoadParentDirectoryCommand = new RelayCommand(LoadParentDirectory);
     }
     private void OpenStyleDialog()
     {
@@ -261,9 +265,19 @@ public class MainWindowViewModel
     private void OpenFile()
     {
         var openFileDialog = new OpenFileDialog();
+        
         if (openFileDialog.ShowDialog() == true)
         {
             NewFile(openFileDialog);
+        }
+    }
+    
+    public void LoadParentDirectory()
+    {
+        var openFolderDialog = new OpenFolderDialog();
+        if (openFolderDialog.ShowDialog() == true)
+        {
+            ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
         }
     }
     

@@ -5,21 +5,21 @@ namespace weirditor.Models;
 
 public class DocumentModel : ObservableObject
 {
-    private string _filePath;
+    private string _filePath = string.Empty;
     public string FilePath
     {
         get { return _filePath; }
         set { OnPropertyChanged(ref _filePath, value); }
     }
 
-    private string _fileName;
+    private string _fileName = string.Empty;
     public string FileName
     {
         get { return _fileName; }
         set { OnPropertyChanged(ref _fileName, value); }
     }
     
-    private string _initText;
+    private string _initText = string.Empty;
     public string InitText
     {
         get { return _initText; }
