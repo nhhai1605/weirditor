@@ -66,6 +66,7 @@
                                             Margin="4,0"
                                             VerticalAlignment="Center" 
                                         />
+                                        <!-- TODO: Add Button for New File, .etc here -->
                                         <Button Command="{Binding LoadParentDirectoryCommand}" Width="20" Height="20" HorizontalAlignment="Right">
                                             <Button.Content>
                                                 <fa:FontAwesome Icon="Folder"/>
