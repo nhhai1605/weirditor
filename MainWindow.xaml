@@ -7,12 +7,14 @@
         xmlns:viewModels="clr-namespace:weirditor.ViewModels"
         xmlns:models="clr-namespace:weirditor.Models"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:converters="clr-namespace:weirditor.Converters"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="weirditor"
         Height="600"
         Width="800">
     <Window.Resources>
+        <converters:FileExplorerIconConverter x:Key="FileExplorerIconConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
     <Window.DataContext>
@@ -96,7 +98,20 @@
                 <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Name}" />
+                            <!-- StackPanel to hold the icon and name -->
+                            <StackPanel Orientation="Horizontal">
+                                <!-- FontAwesome Icon for Folder -->
+                                <fa:FontAwesome 
+                                    Width="12" 
+                                    Height="12" 
+                                    Margin="0,0,4,0" 
+                                    VerticalAlignment="Center"
+                                    Icon="{Binding Path, Converter={StaticResource FileExplorerIconConverter}, ConverterParameter='Icon'}"
+                                    Foreground="{Binding Path, Converter={StaticResource FileExplorerIconConverter}, ConverterParameter='Color'}" />
+                
+                                <!-- Display the Name of the Directory or File -->
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                            </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
