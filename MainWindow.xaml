@@ -37,36 +37,55 @@
                 </MenuItem>
             </Menu.Items>
         </Menu>
-        <!-- Main Layout -->
         <Grid>
-            <!-- Define Columns for File Explorer and Editor -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" /> <!-- File Explorer -->
-                <ColumnDefinition Width="5" /> <!-- Splitter -->
+                <ColumnDefinition Width="200" /> <!-- Explorer -->
                 <ColumnDefinition Width="*" /> <!-- Editor -->
             </Grid.ColumnDefinitions>
 
-            <!-- File Explorer -->
-            <TreeView 
-                Grid.Column="0" 
-                ItemsSource="{Binding ParentExplorer.Children}">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding  Children }">
-                        <TextBlock Text="{Binding Name}" />
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+            <DockPanel Grid.Column="0">
+                <!-- ParentExplorer Name -->
+                <ContentControl DockPanel.Dock="Top" Margin="0,2">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <TextBlock 
+                                        Text="{Binding ParentExplorer.Name}" 
+                                        FontWeight="Bold" 
+                                        FontSize="14" 
+                                    />
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <!-- Show Button if ParentExplorer.Name is empty -->
+                                <DataTrigger Binding="{Binding ParentExplorer.Name}" Value="">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <Button 
+                                                Content="Open Folder"
+                                                Command="{Binding LoadParentDirectoryCommand}"
+                                            />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
 
-            <!-- Splitter -->
-            <GridSplitter Grid.Column="1"
-                          Width="5"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Background="Gray"
-                          ResizeBehavior="PreviousAndNext" />
+                <!-- Explorer -->
+                <TreeView ItemsSource="{Binding ParentExplorer.Children}">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </DockPanel>
 
             <!-- Editor -->
-            <TabControl Grid.Column="2" Name="EditorTabControl" />
+            <TabControl Grid.Column="1" Name="EditorTabControl" Margin="2,0,0,0" />
         </Grid>
     </DockPanel>
 </Window>
