@@ -214,6 +214,20 @@ public class MainWindowViewModel
         EditorTabControl?.Items.Remove(tabItem);
         DocumentViewList.Remove(documentView);
     }
+
+    private void OnSavedDocument(DocumentViewModel documentView, bool reloadDirection = false )
+    {
+        documentView.TextEditor.Save(documentView.Document.FilePath);
+        documentView.OnSavedDocument();
+        if (reloadDirection)
+        {
+            var directoryPath = Path.GetDirectoryName(documentView.Document.FilePath);
+            if (!string.IsNullOrEmpty(directoryPath) && directoryPath.StartsWith(ExploreView.ParentExplorer.Path, StringComparison.OrdinalIgnoreCase))
+            {                
+                ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
+            }
+        }
+    }
     
     private void SaveFile()
     {
@@ -225,8 +239,7 @@ public class MainWindowViewModel
             }
             else
             {
-                documentView.TextEditor.Save(documentView.Document.FilePath);
-                documentView.OnSavedDocument();
+                OnSavedDocument(documentView);
             }
         }
     }
@@ -237,8 +250,7 @@ public class MainWindowViewModel
         {
             if (!documentView.Document.IsSaved)
             {
-                documentView.TextEditor.Save(documentView.Document.FilePath);
-                documentView.OnSavedDocument();
+                OnSavedDocument(documentView, true);
             }
         }
     }
@@ -251,8 +263,7 @@ public class MainWindowViewModel
         {
             var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
             documentView.DockFile(dialog.FileName);
-            documentView.TextEditor.Save(dialog.FileName);
-            documentView.OnSavedDocument();
+            OnSavedDocument(documentView, true);
         }
     }
 
@@ -270,7 +281,10 @@ public class MainWindowViewModel
         var openFolderDialog = new OpenFolderDialog();
         if (openFolderDialog.ShowDialog() == true)
         {
-            ExploreView.ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
+            if (openFolderDialog.FolderName != ExploreView.ParentExplorer.Path)
+            {
+                ExploreView.ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
+            }
         }
     } 
     
@@ -283,6 +297,10 @@ public class MainWindowViewModel
     {
         if (parameter != null && parameter is ExplorerModel selectedItem)
         {
+            if (Directory.Exists(selectedItem.Path))
+            {
+                return; //selectedItem is directory so don't handle double click
+            }
             if (EditorTabControl!.Items.Count > 0)
             {
                 var existedItem = DocumentViewList.Find(x => x.Document.FilePath == selectedItem.Path);

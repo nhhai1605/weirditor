@@ -41,6 +41,7 @@ public class ExplorerModel : ObservableObject
     {
         Path = path;
         Name = System.IO.Path.GetFileName(path);
+        Children = new ObservableCollection<ExplorerModel>();
         if (Directory.Exists(path))
         {
             foreach (var dir in Directory.GetDirectories(path))

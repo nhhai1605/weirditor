@@ -26,7 +26,8 @@
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenCommand}"/>
         <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding LoadParentDirectoryCommand}"/>
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"/>
-        <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Key="S" Modifiers="Control+Alt" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAllCommand}"/>
         <KeyBinding Key="E" Modifiers="Control" Command="{Binding ExplorerVisibilityCommand}"/>
     </Window.InputBindings> 
     <DockPanel Margin="1">
@@ -37,7 +38,8 @@
                     <MenuItem Header="Open" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
                     <MenuItem Header="Open Folder" Command="{Binding LoadParentDirectoryCommand}" InputGestureText="Ctrl+Shift+O" />
                     <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
-                    <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S" />
+                    <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Alt+S" />
+                    <MenuItem Header="Save all" Command="{Binding SaveAllCommand}" InputGestureText="Ctrl+Shift+S" />
                 </MenuItem>
                 <MenuItem Header="View">
                     <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}" InputGestureText="Ctrl+E" IsChecked="{Binding ExploreView.ExplorerSetting.IsExplorerVisible}" />
@@ -63,7 +65,12 @@
                                 <Setter.Value>
                                     <DockPanel>
                                         <!-- TODO: Add Button for New File, .etc here -->
-                                        <Button DockPanel.Dock="Right" Command="{Binding LoadParentDirectoryCommand}" Width="20" Height="20">
+                                        <Button 
+                                            DockPanel.Dock="Right" 
+                                            Command="{Binding LoadParentDirectoryCommand}" 
+                                            Width="20" 
+                                            ToolTip="Open Folder"
+                                            Height="20">
                                             <Button.Content>
                                                 <fa:FontAwesome Icon="Folder"/>
                                             </Button.Content>
