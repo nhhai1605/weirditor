@@ -8,6 +8,7 @@
         xmlns:models="clr-namespace:weirditor.Models"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:converters="clr-namespace:weirditor.Converters"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="weirditor"
@@ -95,7 +96,7 @@
                 </ContentControl>
 
                 <!-- Explorer -->
-                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
+                <TreeView x:Name="ExplorerTreeView" ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding Children}">
                             <!-- StackPanel to hold the icon and name -->
@@ -114,6 +115,14 @@
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="SelectedItemChanged">
+                            <behaviors:InvokeCommandAction 
+                                Command="{Binding ExplorerTree_SelectedItemChangedCommand}"
+                                CommandParameter="{Binding ElementName=ExplorerTreeView, Path=SelectedItem}"
+                            />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
                 </TreeView>
             </DockPanel>
 

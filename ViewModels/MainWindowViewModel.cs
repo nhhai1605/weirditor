@@ -28,6 +28,7 @@ public class MainWindowViewModel
     public ICommand OpenCommand { get; }
     public ICommand LoadParentDirectoryCommand { get; }
     public ICommand ExplorerVisibilityCommand { get; } 
+    public ICommand ExplorerTree_SelectedItemChangedCommand { get; } 
     
     public MainWindowViewModel()
     {
@@ -41,15 +42,16 @@ public class MainWindowViewModel
             Size = Config.DefaultFontSize,
             Wrap = Config.DefaultWrap
         };
-        FormatCommand = new RelayCommand(OpenStyleDialog);
-        WrapCommand = new RelayCommand(ToggleWrap);
-        NewCommand = new RelayCommand(() => NewFile(null));
-        SaveCommand = new RelayCommand(SaveFile, () => EditorTabControl?.SelectedIndex >= 0);
-        SaveAsCommand = new RelayCommand(SaveFileAs);
-        OpenCommand = new RelayCommand(OpenFile);
-        SaveAllCommand = new RelayCommand(SaveAll);
-        LoadParentDirectoryCommand = new RelayCommand(LoadParentDirectory);
-        ExplorerVisibilityCommand = new RelayCommand(ExplorerVisibilityControl);
+        FormatCommand = new RelayCommand((_) => OpenStyleDialog());
+        WrapCommand = new RelayCommand((_) => ToggleWrap());
+        NewCommand = new RelayCommand((_) => NewFile(null));
+        SaveCommand = new RelayCommand((_) => SaveFile(), () => EditorTabControl?.SelectedIndex >= 0);
+        SaveAsCommand = new RelayCommand((_) => SaveFileAs());
+        OpenCommand = new RelayCommand((_) => OpenFile());
+        SaveAllCommand = new RelayCommand((_) => SaveAll());
+        LoadParentDirectoryCommand = new RelayCommand((_) => LoadParentDirectory());
+        ExplorerVisibilityCommand = new RelayCommand((_) => ExplorerVisibilityControl());
+        ExplorerTree_SelectedItemChangedCommand = new RelayCommand((parameter) => ExplorerTree_SelectedItemChanged(parameter));
     }
     private void OpenStyleDialog()
     {
@@ -63,7 +65,7 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public void NewFile(OpenFileDialog? openFileDialog)   
+    public void NewFile(string? path)   
     {
         TextEditor textEditor = new TextEditor
         {
@@ -82,16 +84,17 @@ public class MainWindowViewModel
             Source = documentView.Document,
             Converter = new FileExtensionToHighlightingConverter()
         });
-        if (openFileDialog != null)
+        var fileName = string.Empty;
+        if (!string.IsNullOrEmpty(path))
         {
-            documentView.DockFile(openFileDialog);
+            fileName = Path.GetFileName(path);
+            documentView.DockFile(path);
             documentView.Document.IsNew = false;
             documentView.Document.IsSaved = true;
-            var fileName = openFileDialog.FileName;
-            textEditor.Load(fileName);
+            textEditor.Load(path);
             documentView.Document.InitText = textEditor.Text;
             textEditor.CaretOffset = textEditor.Text.Length;
-            textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(fileName));
+            textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(path));
         }
         else
         {
@@ -130,7 +133,7 @@ public class MainWindowViewModel
         
         TextBlock headerTextBlock = new TextBlock
         {
-            Text = openFileDialog != null ? openFileDialog.SafeFileName : Config.NewFileText,
+            Text = string.IsNullOrEmpty(fileName) ? Config.NewFileText : fileName,
             Style = new Style(typeof(TextBlock))
             {
                 Triggers =
@@ -186,7 +189,7 @@ public class MainWindowViewModel
                     Padding = new Thickness(0),
                     BorderThickness = new Thickness(0),
                     Background = Brushes.Transparent,
-                    Command = new RelayCommand(() => CloseTab(tabItem))
+                    Command = new RelayCommand((_) => CloseTab(tabItem))
                 }
             },
         };
@@ -258,7 +261,7 @@ public class MainWindowViewModel
         if (dialog.ShowDialog() == true) 
         {
             var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
-            documentView.DockFile(dialog);
+            documentView.DockFile(dialog.FileName);
             documentView.TextEditor.Save(dialog.FileName);
             documentView.OnSavedDocument();
         }
@@ -267,10 +270,9 @@ public class MainWindowViewModel
     private void OpenFile()
     {
         var openFileDialog = new OpenFileDialog();
-        
         if (openFileDialog.ShowDialog() == true)
         {
-            NewFile(openFileDialog);
+            NewFile(openFileDialog.FileName);
         }
     }
     
@@ -286,6 +288,14 @@ public class MainWindowViewModel
     public void ExplorerVisibilityControl()
     {
         ExploreView.ExplorerSetting.IsExplorerVisible = !ExploreView.ExplorerSetting.IsExplorerVisible;
+    } 
+    
+    public void ExplorerTree_SelectedItemChanged(object? parameter)
+    {
+        if (parameter != null && parameter is ExplorerModel selectedItem)
+        {
+            NewFile(selectedItem.Path);
+        }
     }
     
 }

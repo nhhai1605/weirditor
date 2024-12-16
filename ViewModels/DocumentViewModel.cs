@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
@@ -27,10 +28,11 @@ public class DocumentViewModel
         Document.InitText = TextEditor.Text;
     }
 
-    public void DockFile<T>(T dialog) where T : FileDialog
+    public void DockFile(string path)
     {
-        Document.FilePath = dialog.FileName;
-        Document.FileName = dialog.SafeFileName;
+        var fileName = Path.GetFileName(path);
+        Document.FilePath = path;
+        Document.FileName = fileName;
     }
 }
 
