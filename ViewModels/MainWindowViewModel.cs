@@ -65,7 +65,7 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public void NewFile(string? path)   
+    private void NewFile(string? path)   
     {
         TextEditor textEditor = new TextEditor
         {
@@ -276,7 +276,7 @@ public class MainWindowViewModel
         }
     }
     
-    public void LoadParentDirectory()
+    private void LoadParentDirectory()
     {
         var openFolderDialog = new OpenFolderDialog();
         if (openFolderDialog.ShowDialog() == true)
@@ -285,12 +285,12 @@ public class MainWindowViewModel
         }
     } 
     
-    public void ExplorerVisibilityControl()
+    private void ExplorerVisibilityControl()
     {
         ExploreView.ExplorerSetting.IsExplorerVisible = !ExploreView.ExplorerSetting.IsExplorerVisible;
     } 
     
-    public void ExplorerTree_SelectedItemChanged(object? parameter)
+    private void ExplorerTree_SelectedItemChanged(object? parameter)
     {
         if (parameter != null && parameter is ExplorerModel selectedItem)
         {
