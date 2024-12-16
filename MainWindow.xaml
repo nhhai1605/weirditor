@@ -96,7 +96,12 @@
                 </ContentControl>
 
                 <!-- Explorer -->
-                <TreeView x:Name="ExplorerTreeView" ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
+                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <EventSetter Event="MouseDoubleClick" Handler="ExplorerTree_SelectedItemChanged" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type models:ExplorerModel}" ItemsSource="{Binding Children}">
                             <!-- StackPanel to hold the icon and name -->
@@ -115,14 +120,15 @@
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
-                    <behaviors:Interaction.Triggers>
-                        <behaviors:EventTrigger EventName="SelectedItemChanged">
-                            <behaviors:InvokeCommandAction 
-                                Command="{Binding ExplorerTree_SelectedItemChangedCommand}"
-                                CommandParameter="{Binding ElementName=ExplorerTreeView, Path=SelectedItem}"
-                            />
-                        </behaviors:EventTrigger>
-                    </behaviors:Interaction.Triggers>
+                    <!-- This for trigger without double click (simplest method) -->
+                    <!-- <behaviors:Interaction.Triggers> -->
+                    <!--     <behaviors:EventTrigger EventName="SelectedItemChanged"> -->
+                    <!--         <behaviors:InvokeCommandAction  -->
+                    <!--             Command="{Binding ExplorerTree_SelectedItemChangedCommand}" -->
+                    <!--             CommandParameter="{Binding ElementName=ExplorerTreeView, Path=SelectedItem}" -->
+                    <!--         /> -->
+                    <!--     </behaviors:EventTrigger> -->
+                    <!-- </behaviors:Interaction.Triggers> -->
                 </TreeView>
             </DockPanel>
 

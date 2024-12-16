@@ -65,7 +65,7 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    private void NewFile(string? path)   
+    public void NewFile(string? path)   
     {
         TextEditor textEditor = new TextEditor
         {
@@ -294,6 +294,15 @@ public class MainWindowViewModel
     {
         if (parameter != null && parameter is ExplorerModel selectedItem)
         {
+            if (EditorTabControl!.Items.Count > 0)
+            {
+                var existedItem = DocumentViewList.Find(x => x.Document.FilePath == selectedItem.Path);
+                if (existedItem != null)
+                {
+                    EditorTabControl.SelectedIndex = DocumentViewList.IndexOf(existedItem);
+                    return;
+                }
+            }
             NewFile(selectedItem.Path);
         }
     }

@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using weirditor.Models;
 using weirditor.ViewModels;
 
 namespace weirditor;
@@ -15,7 +18,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         MainWindowViewModel = (MainWindowViewModel) DataContext;
         MainWindowViewModel.EditorTabControl = EditorTabControl;
-        // MainWindowViewModel.DocumentView.Document.TextEditor = TextEditor;
     }
     protected override void OnClosing(CancelEventArgs e)
     {
@@ -32,5 +34,13 @@ public partial class MainWindow : Window
             }
         }
         base.OnClosing(e);
+    }
+    
+    private void ExplorerTree_SelectedItemChanged(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext is ExplorerModel selectedItem)
+        {
+            MainWindowViewModel?.ExplorerTree_SelectedItemChangedCommand.Execute(selectedItem);
+        }
     }
 }
