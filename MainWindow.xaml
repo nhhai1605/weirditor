@@ -62,19 +62,20 @@
                             <Setter Property="Content">
                                 <Setter.Value>
                                     <DockPanel>
+                                        <!-- TODO: Add Button for New File, .etc here -->
+                                        <Button DockPanel.Dock="Right" Command="{Binding LoadParentDirectoryCommand}" Width="20" Height="20">
+                                            <Button.Content>
+                                                <fa:FontAwesome Icon="Folder"/>
+                                            </Button.Content>
+                                        </Button>
                                         <TextBlock 
-                                            Text="Test" 
+                                            Text="{Binding ExploreView.ParentExplorer.Name}"
+                                            ToolTip="{Binding ExploreView.ParentExplorer.Path}"
                                             FontWeight="Bold" 
                                             FontSize="14" 
                                             Margin="4,0"
                                             VerticalAlignment="Center" 
                                         />
-                                        <!-- TODO: Add Button for New File, .etc here -->
-                                        <Button Command="{Binding LoadParentDirectoryCommand}" Width="20" Height="20" HorizontalAlignment="Right">
-                                            <Button.Content>
-                                                <fa:FontAwesome Icon="Folder"/>
-                                            </Button.Content>
-                                        </Button>
                                     </DockPanel>
                                 </Setter.Value>
                             </Setter>
