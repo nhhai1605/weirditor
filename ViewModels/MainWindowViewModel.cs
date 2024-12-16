@@ -110,21 +110,10 @@ public class MainWindowViewModel
             documentView.Document.IsSaved = textEditor.Text == documentView.Document.InitText;
         };
         
-        TextBlock footer = new TextBlock
-        {
-            FontSize = Config.DefaultFooterFontSize
-        };
-        footer.SetBinding(TextBlock.TextProperty, new Binding("FilePath") { Source = documentView.Document });
-        footer.SetBinding(TextBlock.FontFamilyProperty, new Binding("Family") { Source = Format });
-        
-        DockPanel.SetDock(footer, Dock.Bottom);
-        DockPanel dockPanel = new DockPanel();
-        dockPanel.Children.Add(footer);
-        dockPanel.Children.Add(textEditor);
-        
         TabItem tabItem = new TabItem
         {
-            IsSelected = true
+            IsSelected = true,
+            ToolTip = string.IsNullOrEmpty(path) ? Config.NewFileText : path 
         };
         
         //Add tabItem before adding CloseTab()
@@ -202,7 +191,7 @@ public class MainWindowViewModel
             }
         };
         tabItem.Header = header;
-        tabItem.Content = dockPanel;
+        tabItem.Content = textEditor;
         
         // Use this to wait for the UI to update before focusing the text editor
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
