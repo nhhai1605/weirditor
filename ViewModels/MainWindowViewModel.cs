@@ -26,6 +26,8 @@ public class MainWindowViewModel
     public ICommand SaveAsCommand { get; }
     public ICommand SaveAllCommand { get; }
     public ICommand OpenCommand { get; }
+    public ICommand DeleteCommand { get; }
+    public ICommand DeleteCurrentFileCommand { get; }
     public ICommand LoadParentDirectoryCommand { get; }
     public ICommand ExplorerVisibilityCommand { get; } 
     public ICommand ExplorerTree_SelectedItemChangedCommand { get; } 
@@ -49,6 +51,8 @@ public class MainWindowViewModel
         SaveAsCommand = new RelayCommand((_) => SaveFileAs());
         OpenCommand = new RelayCommand((_) => OpenFile());
         SaveAllCommand = new RelayCommand((_) => SaveAll());
+        DeleteCommand = new RelayCommand((parameter) => Delete(parameter), () => EditorTabControl?.SelectedIndex >= 0);
+        DeleteCurrentFileCommand = new RelayCommand((_) => DeleteCurrentFile(), () => EditorTabControl?.SelectedIndex >= 0);
         LoadParentDirectoryCommand = new RelayCommand((_) => LoadParentDirectory());
         ExplorerVisibilityCommand = new RelayCommand((_) => ExplorerVisibilityControl());
         ExplorerTree_SelectedItemChangedCommand = new RelayCommand((parameter) => ExplorerTree_SelectedItemChanged(parameter));
@@ -65,7 +69,7 @@ public class MainWindowViewModel
         Format.Wrap = !Format.Wrap;
     }
     
-    public void NewFile(string? path)   
+    private void NewFile(string? path)   
     {
         TextEditor textEditor = new TextEditor
         {
@@ -214,18 +218,50 @@ public class MainWindowViewModel
         EditorTabControl?.Items.Remove(tabItem);
         DocumentViewList.Remove(documentView);
     }
+    
+    private void RemoveTabForFile(string filePath)
+    {
+        int tabIndex = DocumentViewList.FindIndex(x => x.Document.FilePath == filePath);
+        if (tabIndex >= 0)
+        {
+            DocumentViewList.RemoveAt(tabIndex);
+            EditorTabControl!.Items.RemoveAt(tabIndex);
+        }
+    }
+    
+    private void RemoveTabsForFolder(string folderPath)
+    {
+        // Get all indices of open tabs that are within the folderPath
+        var indicesToRemove = DocumentViewList
+            .Select((view, index) => new { view.Document.FilePath, Index = index })
+            .Where(x => x.FilePath.StartsWith(folderPath, StringComparison.OrdinalIgnoreCase))
+            .Select(x => x.Index)
+            .OrderByDescending(x => x) // Remove in reverse order to avoid index shifting
+            .ToList();
 
+        foreach (var index in indicesToRemove)
+        {
+            DocumentViewList.RemoveAt(index);
+            EditorTabControl!.Items.RemoveAt(index);
+        }
+    }
+    
     private void OnSavedDocument(DocumentViewModel documentView, bool reloadDirection = false )
     {
         documentView.TextEditor.Save(documentView.Document.FilePath);
         documentView.OnSavedDocument();
         if (reloadDirection)
         {
-            var directoryPath = Path.GetDirectoryName(documentView.Document.FilePath);
-            if (!string.IsNullOrEmpty(directoryPath) && directoryPath.StartsWith(ExploreView.ParentExplorer.Path, StringComparison.OrdinalIgnoreCase))
-            {                
-                ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
-            }
+            ReloadDirectory(documentView);
+        }
+    }
+
+    private void ReloadDirectory(DocumentViewModel documentView)
+    {
+        var directoryPath = Path.GetDirectoryName(documentView.Document.FilePath);
+        if (!string.IsNullOrEmpty(directoryPath) && directoryPath.StartsWith(ExploreView.ParentExplorer.Path, StringComparison.OrdinalIgnoreCase))
+        {                
+            ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
         }
     }
     
@@ -251,6 +287,45 @@ public class MainWindowViewModel
             if (!documentView.Document.IsSaved)
             {
                 OnSavedDocument(documentView, true);
+            }
+        }
+    }
+
+    private void Delete(object? parameter)
+    {
+        if (parameter != null && parameter is ExplorerModel itemToDelete)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Delete Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                if (File.Exists(itemToDelete.Path))
+                {
+                    File.Delete(itemToDelete.Path);
+                    RemoveTabForFile(itemToDelete.Path);
+                }
+                else if (Directory.Exists(itemToDelete.Path))
+                {
+                    Directory.Delete(itemToDelete.Path, true); // Recursively delete a directory
+                    RemoveTabsForFolder(itemToDelete.Path);
+                }
+
+                //Delete here is from explorer, so always reload
+                ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
+            }
+        }
+    }
+    
+    private void DeleteCurrentFile()
+    {
+        if (EditorTabControl!.SelectedIndex >= 0)
+        {
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure?", "Delete Confirmation", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
+                File.Delete(documentView.Document.FilePath);
+                RemoveTabForFile(documentView.Document.FilePath);
+                ReloadDirectory(documentView);
             }
         }
     }

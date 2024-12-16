@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using ICSharpCode.AvalonEdit;
 using weirditor.Core;
 
 namespace weirditor.Models;
@@ -26,6 +25,13 @@ public class ExplorerModel : ObservableObject
     {
         get { return _children; }
         set { OnPropertyChanged(ref _children, value); }
+    }
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get { return _isSelected; }
+        set { OnPropertyChanged(ref _isSelected, value); }
     }
 
     public ExplorerModel(string path)

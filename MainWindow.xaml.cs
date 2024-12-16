@@ -43,4 +43,15 @@ public partial class MainWindow : Window
             MainWindowViewModel?.ExplorerTree_SelectedItemChangedCommand.Execute(selectedItem);
         }
     }
+
+    private void ExplorerTree_ItemRightClicked(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext is ExplorerModel selectedItem)
+        {
+            if (selectedItem != null)
+            {
+                selectedItem.IsSelected = true;
+            }
+        }
+    }
 }

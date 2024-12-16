@@ -40,6 +40,7 @@
                     <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
                     <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Alt+S" />
                     <MenuItem Header="Save all" Command="{Binding SaveAllCommand}" InputGestureText="Ctrl+Shift+S" />
+                    <MenuItem Header="Delete" Command="{Binding DeleteCurrentFileCommand}" />
                 </MenuItem>
                 <MenuItem Header="View">
                     <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}" InputGestureText="Ctrl+E" IsChecked="{Binding ExploreView.ExplorerSetting.IsExplorerVisible}" />
@@ -107,7 +108,19 @@
                 <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
+                            <!-- Handle double click on item -->
                             <EventSetter Event="MouseDoubleClick" Handler="ExplorerTree_SelectedItemChanged" />
+                            
+                            <!-- Show menu when right click item -->
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                            <EventSetter Event="PreviewMouseRightButtonDown" Handler="ExplorerTree_ItemRightClicked" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="Delete" Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=viewModels:MainWindowViewModel}}" CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
