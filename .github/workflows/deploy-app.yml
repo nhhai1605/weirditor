@@ -6,7 +6,7 @@ on:
       - "deploy/v*"
 
 env:
-  PROJECT_PATH: weirditor/weirditor.csproj
+  PROJECT_PATH: weirditor.csproj
 
 jobs:
   deploy:
