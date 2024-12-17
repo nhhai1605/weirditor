@@ -109,10 +109,31 @@ public class MainWindowViewModel
             documentView.Document.FilePath = Config.NewFileText;
         }
         
+        
+        TextEditor placeholder = new TextEditor
+        {
+            Text = "Enter text here...", // Placeholder text
+            ShowLineNumbers = true,
+            LineNumbersForeground = Brushes.Transparent,
+            Foreground = Brushes.Gray,
+            IsHitTestVisible = false,
+            Background = Brushes.Transparent,
+            Visibility = string.IsNullOrEmpty(textEditor.Text) ? Visibility.Visible : Visibility.Hidden
+        };
+        placeholder.SetBinding(TextEditor.FontFamilyProperty, new Binding("Family") { Source = Format });
+        placeholder.SetBinding(TextEditor.FontSizeProperty, new Binding("Size") { Source = Format });
+        placeholder.SetBinding(TextEditor.FontStyleProperty, new Binding("Style") { Source = Format });
+        placeholder.SetBinding(TextEditor.FontWeightProperty, new Binding("Weight") { Source = Format });
+        
         textEditor.TextChanged += (_, _) =>
         {
             documentView.Document.IsSaved = textEditor.Text == documentView.Document.InitText;
+            placeholder.Visibility = string.IsNullOrEmpty(textEditor.Text) ? Visibility.Visible : Visibility.Hidden;
         };
+        
+        Grid editorAndPlaceholderContainer = new Grid();
+        editorAndPlaceholderContainer.Children.Add(textEditor);
+        editorAndPlaceholderContainer.Children.Add(placeholder);
         
         TabItem tabItem = new TabItem
         {
@@ -195,7 +216,7 @@ public class MainWindowViewModel
             }
         };
         tabItem.Header = header;
-        tabItem.Content = textEditor;
+        tabItem.Content = editorAndPlaceholderContainer;
         
         // Use this to wait for the UI to update before focusing the text editor
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
