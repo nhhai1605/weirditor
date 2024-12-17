@@ -11,7 +11,6 @@ env:
 
 jobs:
   deploy:
-    permissions: write-all
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,13 +28,13 @@ jobs:
       - uses: actions/create-release@v1
         id: create_release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FINE_GRAINED_PAT: ${{ secrets.FINE_GRAINED_PAT }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           
       - uses: csexton/release-asset-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.FINE_GRAINED_PAT }}
           pattern: weirditor/bin/Release/net9.0-windows/win-x64/publish/*.exe
           release-url: ${{ steps.create_release.outputs.upload_url }}
