@@ -8,10 +8,10 @@ on:
 env:
   PROJECT_PATH: weirditor.csproj
   
-permissions: write-all
 
 jobs:
   deploy:
+    permissions: write-all
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
