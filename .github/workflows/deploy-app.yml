@@ -7,34 +7,38 @@ on:
 
 env:
   PROJECT_PATH: weirditor.csproj
-  
+  PUBLISH_DIR: bin/Release/net9.0-windows/publish
 
 jobs:
   deploy:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-     
-      - uses: actions/setup-dotnet@v1
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 9.0.x
-      
-      - run: dotnet restore ${{env.PROJECT_PATH}}
-      
-      - run: dotnet build ${{env.PROJECT_PATH}} -c Release --no-restore
-      
-      - run: dotnet build ${{env.PROJECT_PATH}} -c Release --self-contained -p:PublishSingleFile=true
-      
-      - uses: actions/create-release@v1
+
+      - name: Restore Dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Publish Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ${{ env.PUBLISH_DIR }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.FINE_GRAINED_PAT }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          
-      - uses: csexton/release-asset-action@v2
+
+      - name: Upload Release Asset
+        uses: csexton/release-asset-action@v2
         with:
           github-token: ${{ secrets.FINE_GRAINED_PAT }}
-          pattern: bin/Release/net9.0-windows/win-x64/publish/*.exe
+          pattern: ${{ env.PUBLISH_DIR }}/*.exe
           release-url: ${{ steps.create_release.outputs.upload_url }}
