@@ -12,21 +12,21 @@ namespace weirditor;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private MainWindowViewModel MainWindowViewModel;
+    private MainWindowViewModel MainWindowView;
     public MainWindow()
     {
         InitializeComponent();
-        MainWindowViewModel = (MainWindowViewModel) DataContext;
-        MainWindowViewModel.EditorTabControl = EditorTabControl;
+        MainWindowView = (MainWindowViewModel) DataContext;
+        MainWindowView.EditorTabControl = EditorTabControl;
     }
     protected override void OnClosing(CancelEventArgs e)
     {
-        if(MainWindowViewModel.DocumentViewList.Where(d => !d.Document.IsSaved).Count() > 0)
+        if(MainWindowView.DocumentViewList.Where(d => !d.Document.IsSaved).Count() > 0)
         {
             MessageBoxResult result = MessageBox.Show("Do you want to save changes?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
             if(result == MessageBoxResult.Yes)
             {
-                MainWindowViewModel.SaveAllCommand.Execute(null);
+                MainWindowView.SaveAllCommand.Execute(null);
             }
             else if(result == MessageBoxResult.Cancel)
             {
@@ -40,7 +40,7 @@ public partial class MainWindow : Window
     {
         if (sender is TreeViewItem treeViewItem && treeViewItem.DataContext is ExplorerModel selectedItem)
         {
-            MainWindowViewModel?.ExplorerTree_SelectedItemChangedCommand.Execute(selectedItem);
+            MainWindowView?.ExplorerTree_SelectedItemChangedCommand.Execute(selectedItem);
         }
     }
 
@@ -53,5 +53,11 @@ public partial class MainWindow : Window
                 selectedItem.IsSelected = true;
             }
         }
+    }
+
+    private void ExplorerTree_ItemDelete(object sender, RoutedEventArgs e)
+    {
+        ExplorerModel selectedItem = (ExplorerModel) ((MenuItem) sender).DataContext;
+        MainWindowView.ExplorerTree_ItemDeleteCommand.Execute(selectedItem);
     }
 }

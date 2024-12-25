@@ -117,7 +117,14 @@
                             <Setter Property="ContextMenu">
                                 <Setter.Value>
                                     <ContextMenu>
-                                        <MenuItem Header="Delete" Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=viewModels:MainWindowViewModel}}" CommandParameter="{Binding}" />
+                                        <MenuItem Header="Delete">
+                                            <!-- Instead of just using Click, I have to do this or I will get casting error -->
+                                            <MenuItem.Style>
+                                                <Style TargetType="MenuItem">
+                                                    <EventSetter Event="Click" Handler="ExplorerTree_ItemDelete"/>
+                                                </Style>
+                                            </MenuItem.Style>
+                                        </MenuItem>
                                     </ContextMenu>
                                 </Setter.Value>
                             </Setter>

@@ -26,7 +26,7 @@ public class MainWindowViewModel
     public ICommand SaveAsCommand { get; }
     public ICommand SaveAllCommand { get; }
     public ICommand OpenCommand { get; }
-    public ICommand DeleteCommand { get; }
+    public ICommand ExplorerTree_ItemDeleteCommand { get; }
     public ICommand DeleteCurrentFileCommand { get; }
     public ICommand LoadParentDirectoryCommand { get; }
     public ICommand ExplorerVisibilityCommand { get; } 
@@ -51,7 +51,7 @@ public class MainWindowViewModel
         SaveAsCommand = new RelayCommand((_) => SaveFileAs());
         OpenCommand = new RelayCommand((_) => OpenFile());
         SaveAllCommand = new RelayCommand((_) => SaveAll());
-        DeleteCommand = new RelayCommand((parameter) => Delete(parameter), () => EditorTabControl?.SelectedIndex >= 0);
+        ExplorerTree_ItemDeleteCommand = new RelayCommand((parameter) => ExplorerTree_ItemDelete(parameter), () => EditorTabControl?.SelectedIndex >= 0);
         DeleteCurrentFileCommand = new RelayCommand((_) => DeleteCurrentFile(), () => EditorTabControl?.SelectedIndex >= 0);
         LoadParentDirectoryCommand = new RelayCommand((_) => LoadParentDirectory());
         ExplorerVisibilityCommand = new RelayCommand((_) => ExplorerVisibilityControl());
@@ -312,7 +312,7 @@ public class MainWindowViewModel
         }
     }
 
-    private void Delete(object? parameter)
+    private void ExplorerTree_ItemDelete(object? parameter)
     {
         if (parameter != null && parameter is ExplorerModel itemToDelete)
         {
@@ -329,7 +329,7 @@ public class MainWindowViewModel
                     Directory.Delete(itemToDelete.Path, true); // Recursively delete a directory
                     RemoveTabsForFolder(itemToDelete.Path);
                 }
-
+        
                 //Delete here is from explorer, so always reload
                 ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
             }
