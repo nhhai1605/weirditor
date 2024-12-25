@@ -66,16 +66,41 @@
                                 <Setter.Value>
                                     <DockPanel>
                                         <!-- TODO: Add Button for New File, .etc here -->
-                                        <Button 
-                                            DockPanel.Dock="Right" 
-                                            Command="{Binding LoadParentDirectoryCommand}" 
-                                            Width="20" 
-                                            ToolTip="Open Folder"
-                                            Height="20">
-                                            <Button.Content>
-                                                <fa:FontAwesome Icon="Folder"/>
-                                            </Button.Content>
-                                        </Button>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                            <StackPanel.Resources>
+                                                <Style TargetType="{x:Type Button}">
+                                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                                </Style>
+                                            </StackPanel.Resources> 
+                                            <Button 
+                                                Command="{Binding LoadParentDirectoryCommand}" 
+                                                ToolTip="New File"
+                                                Width="20" 
+                                                Height="20">
+                                                <Button.Content>
+                                                    <fa:FontAwesome Icon="FileOutline"/>
+                                                </Button.Content>
+                                            </Button>
+                                            <Button 
+                                                Command="{Binding LoadParentDirectoryCommand}" 
+                                                ToolTip="New Folder"
+                                                Width="20" 
+                                                Height="20">
+                                                <Button.Content>
+                                                    <fa:FontAwesome Icon="FolderOutline"/>
+                                                </Button.Content>
+                                            </Button>
+                                            <Button 
+                                                Command="{Binding LoadParentDirectoryCommand}" 
+                                                ToolTip="Open Folder"
+                                                Width="20" 
+                                                Height="20">
+                                                <Button.Content>
+                                                    <fa:FontAwesome Icon="FolderOutlinepenOutline"/>
+                                                </Button.Content>
+                                            </Button>
+                                        </StackPanel>
+                                        
                                         <TextBlock 
                                             Text="{Binding ExploreView.ParentExplorer.Name}"
                                             ToolTip="{Binding ExploreView.ParentExplorer.Path}"

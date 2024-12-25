@@ -23,8 +23,10 @@ public class ExplorerViewModel
     
     public void ParentExplorerLoadDirectory(string path)
     {
+        Mouse.OverrideCursor = Cursors.Wait;
         ParentExplorer.LoadDirectory(path);
         ParentExplorer.StartWatching();
+        Mouse.OverrideCursor = Cursors.Arrow;
     }
 }
 
