@@ -20,5 +20,11 @@ public class ExplorerViewModel
         ParentExplorer = new ExplorerModel(String.Empty);
         ExplorerSetting = new ExplorerSettingModel();
     }
+    
+    public void ParentExplorerLoadDirectory(string path)
+    {
+        ParentExplorer.LoadDirectory(path);
+        ParentExplorer.StartWatching();
+    }
 }
 

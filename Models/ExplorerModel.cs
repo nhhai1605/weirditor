@@ -33,7 +33,9 @@ public class ExplorerModel : ObservableObject
         get { return _isSelected; }
         set { OnPropertyChanged(ref _isSelected, value); }
     }
-
+    
+    private FileSystemWatcher? _fileSystemWatcher;
+    
     public ExplorerModel(string path)
     {
         Children = new ObservableCollection<ExplorerModel>();
@@ -50,15 +52,69 @@ public class ExplorerModel : ObservableObject
         Children = new ObservableCollection<ExplorerModel>();
         if (Directory.Exists(path))
         {
+            //Need to use Dispatcher.Invoke to update UI thread (https://stackoverflow.com/a/18336392)
             foreach (var dir in Directory.GetDirectories(path))
             {
-                Children.Add(new ExplorerModel(dir));
+                App.Current.Dispatcher.Invoke((Action) delegate 
+                {
+                    Children.Add(new ExplorerModel(dir));
+                });
             }
             foreach (var file in Directory.GetFiles(path))
             {
-                Children.Add(new ExplorerModel(file));
+                App.Current.Dispatcher.Invoke((Action) delegate 
+                {
+                    Children.Add(new ExplorerModel(file));
+                });
             }
         }
+    }
+    public void StartWatching()
+    {
+        if (Directory.Exists(Path))
+        {
+            _fileSystemWatcher = new FileSystemWatcher(Path)
+            {
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite
+            };
+
+            _fileSystemWatcher.Created += OnFileSystemChanged;
+            _fileSystemWatcher.Deleted += OnFileSystemChanged;
+            _fileSystemWatcher.Renamed += OnFileRenamed;
+            _fileSystemWatcher.Changed += OnFileSystemChanged;
+
+            _fileSystemWatcher.IncludeSubdirectories = true;
+            _fileSystemWatcher.EnableRaisingEvents = true;
+        }
+    }
+
+    private void StopWatching()
+    {
+        if (_fileSystemWatcher != null)
+        {
+            _fileSystemWatcher.EnableRaisingEvents = false;
+            _fileSystemWatcher.Created -= OnFileSystemChanged;
+            _fileSystemWatcher.Deleted -= OnFileSystemChanged;
+            _fileSystemWatcher.Renamed -= OnFileRenamed;
+            _fileSystemWatcher.Changed -= OnFileSystemChanged;
+            _fileSystemWatcher.Dispose();
+            _fileSystemWatcher = null;
+        }
+    }
+
+    private void OnFileSystemChanged(object sender, FileSystemEventArgs e)
+    {
+        LoadDirectory(Path);
+    }
+
+    private void OnFileRenamed(object sender, RenamedEventArgs e)
+    {
+        LoadDirectory(Path);
+    }
+
+    ~ExplorerModel()
+    {
+        StopWatching();
     }
 }
 

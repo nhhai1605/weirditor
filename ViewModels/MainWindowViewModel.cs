@@ -267,24 +267,12 @@ public class MainWindowViewModel
         }
     }
     
-    private void OnSavedDocument(DocumentViewModel documentView, bool reloadDirection = false )
+    private void OnSavedDocument(DocumentViewModel documentView)
     {
         documentView.TextEditor.Save(documentView.Document.FilePath);
         documentView.OnSavedDocument();
-        if (reloadDirection)
-        {
-            ReloadDirectory(documentView);
-        }
     }
-
-    private void ReloadDirectory(DocumentViewModel documentView)
-    {
-        var directoryPath = Path.GetDirectoryName(documentView.Document.FilePath);
-        if (!string.IsNullOrEmpty(directoryPath) && directoryPath.StartsWith(ExploreView.ParentExplorer.Path, StringComparison.OrdinalIgnoreCase))
-        {                
-            ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
-        }
-    }
+    
     
     private void SaveFile()
     {
@@ -307,7 +295,7 @@ public class MainWindowViewModel
         {
             if (!documentView.Document.IsSaved)
             {
-                OnSavedDocument(documentView, true);
+                OnSavedDocument(documentView);
             }
         }
     }
@@ -329,9 +317,6 @@ public class MainWindowViewModel
                     Directory.Delete(itemToDelete.Path, true); // Recursively delete a directory
                     RemoveTabsForFolder(itemToDelete.Path);
                 }
-        
-                //Delete here is from explorer, so always reload
-                ExploreView.ParentExplorer.LoadDirectory(ExploreView.ParentExplorer.Path);
             }
         }
     }
@@ -346,7 +331,6 @@ public class MainWindowViewModel
                 var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
                 File.Delete(documentView.Document.FilePath);
                 RemoveTabForFile(documentView.Document.FilePath);
-                ReloadDirectory(documentView);
             }
         }
     }
@@ -359,7 +343,7 @@ public class MainWindowViewModel
         {
             var documentView = DocumentViewList[EditorTabControl!.SelectedIndex];
             documentView.DockFile(dialog.FileName);
-            OnSavedDocument(documentView, true);
+            OnSavedDocument(documentView);
         }
     }
 
@@ -377,9 +361,9 @@ public class MainWindowViewModel
         var openFolderDialog = new OpenFolderDialog();
         if (openFolderDialog.ShowDialog() == true)
         {
-            if (openFolderDialog.FolderName != ExploreView.ParentExplorer.Path)
+            if (openFolderDialog.FolderName != ExploreView.ParentExplorer.Path) //Prevent reloading the same directory
             {
-                ExploreView.ParentExplorer.LoadDirectory(openFolderDialog.FolderName);
+                ExploreView.ParentExplorerLoadDirectory(openFolderDialog.FolderName);
             }
         }
     } 
