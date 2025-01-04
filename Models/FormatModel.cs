@@ -43,5 +43,58 @@ public class FormatModel : ObservableObject
         get { return _size; }
         set { OnPropertyChanged(ref _size, value); }
     }
+    
+    private Brush _background;
+    public Brush Background
+    {
+        get { return _background; }
+        set { OnPropertyChanged(ref _background, value); }
+    }
+    
+    private Brush _foreground;
+    public Brush Foreground
+    {
+        get { return _foreground; }
+        set { OnPropertyChanged(ref _foreground, value); }
+    }
+    
+    private Brush _lineNumbersForeground;
+    public Brush LineNumbersForeground
+    {
+        get { return _lineNumbersForeground; }
+        set { OnPropertyChanged(ref _lineNumbersForeground, value); }
+    } 
+    
+    private Brush _placeholderForeground;
+    public Brush PlaceholderForeground
+    {
+        get { return _placeholderForeground; }
+        set { OnPropertyChanged(ref _placeholderForeground, value); }
+    }
+    
+        
+    private Themes _theme;
+    public Themes Theme
+    {
+        get { return _theme; }
+        set
+        {
+            OnPropertyChanged(ref _theme, value);
+            if(value == Themes.Light)
+            {
+                Background = Brushes.White;
+                Foreground = Brushes.Black;
+                LineNumbersForeground = Brushes.Gray;
+                PlaceholderForeground = Brushes.Gray;
+            }
+            else
+            {
+                Background = Brushes.MidnightBlue;
+                Foreground = Brushes.White;
+                LineNumbersForeground = Brushes.LightGray;
+                PlaceholderForeground = Brushes.LightGray;
+            }
+        }
+    }
 }
 

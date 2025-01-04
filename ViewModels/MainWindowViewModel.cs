@@ -42,7 +42,8 @@ public class MainWindowViewModel
             Weight = Config.DefaultFontWeight,
             Family = Config.DefaultFontFamily,
             Size = Config.DefaultFontSize,
-            Wrap = Config.DefaultWrap
+            Wrap = Config.DefaultWrap,
+            Theme = Config.DefaultTheme
         };
         FormatCommand = new RelayCommand((_) => OpenStyleDialog());
         WrapCommand = new RelayCommand((_) => ToggleWrap());
@@ -83,6 +84,9 @@ public class MainWindowViewModel
         textEditor.SetBinding(TextEditor.FontStyleProperty, new Binding("Style") { Source = Format });
         textEditor.SetBinding(TextEditor.FontWeightProperty, new Binding("Weight") { Source = Format });
         textEditor.SetBinding(TextEditor.WordWrapProperty, new Binding("Wrap") { Source = Format });
+        textEditor.SetBinding(TextEditor.BackgroundProperty, new Binding("Background") { Source = Format });
+        textEditor.SetBinding(TextEditor.ForegroundProperty, new Binding("Foreground") { Source = Format });
+        textEditor.SetBinding(TextEditor.LineNumbersForegroundProperty, new Binding("LineNumbersForeground") { Source = Format });
         textEditor.SetBinding(TextEditor.SyntaxHighlightingProperty, new Binding("FilePath")
         {
             Source = documentView.Document,
@@ -115,7 +119,6 @@ public class MainWindowViewModel
             Text = "Enter text here...", // Placeholder text
             ShowLineNumbers = true,
             LineNumbersForeground = Brushes.Transparent,
-            Foreground = Brushes.Gray,
             IsHitTestVisible = false,
             Background = Brushes.Transparent,
             Visibility = string.IsNullOrEmpty(textEditor.Text) ? Visibility.Visible : Visibility.Hidden
@@ -124,6 +127,7 @@ public class MainWindowViewModel
         placeholder.SetBinding(TextEditor.FontSizeProperty, new Binding("Size") { Source = Format });
         placeholder.SetBinding(TextEditor.FontStyleProperty, new Binding("Style") { Source = Format });
         placeholder.SetBinding(TextEditor.FontWeightProperty, new Binding("Weight") { Source = Format });
+        placeholder.SetBinding(TextEditor.ForegroundProperty, new Binding("PlaceholderForeground") { Source = Format });
         
         textEditor.TextChanged += (_, _) =>
         {

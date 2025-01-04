@@ -7,6 +7,7 @@
         xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
         xmlns:win="clr-namespace:System.Windows;assembly=PresentationCore"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:core="clr-namespace:weirditor.Core"
         mc:Ignorable="d"
         Title="FontDialog" Height="400" Width="300">
     <Window.Resources>
@@ -34,10 +35,18 @@
             <win:FontStyle>Italic</win:FontStyle>
             <win:FontStyle>Oblique</win:FontStyle>
         </x:Array>
+        
+        <ObjectDataProvider x:Key="ThemeOptions" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="core:Themes"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
@@ -77,6 +86,12 @@
             <TextBlock>Font Weight</TextBlock>
             <ComboBox ItemsSource="{Binding Source={StaticResource FontWeightOptions}}"
                       SelectedItem="{Binding Format.Weight}"
+                      SelectedIndex="0"/>
+        </StackPanel>
+        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+            <TextBlock>Theme</TextBlock>
+            <ComboBox ItemsSource="{Binding Source={StaticResource ThemeOptions}}"
+                      SelectedItem="{Binding Format.Theme}"
                       SelectedIndex="0"/>
         </StackPanel>
     </Grid>

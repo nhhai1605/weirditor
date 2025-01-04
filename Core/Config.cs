@@ -11,4 +11,5 @@ public class Config
     public static bool DefaultWrap = false;
     public static FontStyle DefaultFontStyle = FontStyles.Normal;
     public static FontWeight DefaultFontWeight = FontWeights.Normal;
+    public static Themes DefaultTheme = Themes.Light;
 }
