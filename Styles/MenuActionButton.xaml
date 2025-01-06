@@ -5,8 +5,34 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Ellipse Fill="{TemplateBinding Background}" 
-                             Stroke="{TemplateBinding BorderBrush}" />
+                    <Ellipse x:Name="dot" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="Ellipse.MouseEnter" SourceName="dot">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="dot"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="1"
+                                        To="0.5"
+                                        Duration="0:0:0.3" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+
+                        <EventTrigger RoutedEvent="Ellipse.MouseLeave" SourceName="dot">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="dot"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.5"
+                                        To="1"
+                                        Duration="0:0:0.3" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

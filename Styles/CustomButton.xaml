@@ -8,26 +8,27 @@
                 Value="Center" />
         <Setter Property="Margin"
                 Value="0" />
-        <Setter Property="TextElement.Foreground" Value="#f0f0f0" />
+        <Setter Property="TextElement.Foreground" Value="{StaticResource TextBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="border" BorderThickness="0" CornerRadius="5" Width="Auto" Padding="8">
                         <Border.Background>
-                            <SolidColorBrush x:Name="BorderBackground" Color="#272B2F" />
+                            <SolidColorBrush x:Name="BorderBackground" Color="{StaticResource SecondaryColor}" />
                         </Border.Background>
                         <Grid>
-                            <ContentPresenter/>
+                            <ContentPresenter />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="Border.MouseEnter" SourceName="border">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Storyboard.TargetName="BorderBackground"
-                                        Storyboard.TargetProperty="Color"
-                                        From="#272B2F"
-                                        To="#3E434A"
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="BorderBackground"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="1"
+                                        To="0.5"
                                         Duration="0:0:0.3" />
                                 </Storyboard>
                             </BeginStoryboard>
@@ -36,15 +37,16 @@
                         <EventTrigger RoutedEvent="Border.MouseLeave" SourceName="border">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Storyboard.TargetName="BorderBackground"
-                                        Storyboard.TargetProperty="Color"
-                                        From="#3E434A"
-                                        To="#272B2F"
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="BorderBackground"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.5"
+                                        To="1"
                                         Duration="0:0:0.3" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
