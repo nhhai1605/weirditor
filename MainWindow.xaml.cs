@@ -64,7 +64,7 @@ public partial class MainWindow : Window
 
     private void Menu_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.Source is Menu && e.LeftButton == MouseButtonState.Pressed)
+        if (e.Source is Menu)
         {
             DragMove();
             e.Handled = true;
