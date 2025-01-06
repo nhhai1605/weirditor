@@ -5,7 +5,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Ellipse x:Name="dot" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}"/>
+                    <Ellipse x:Name="dot" Fill="{TemplateBinding Background}" StrokeThickness="0"/>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="Ellipse.MouseEnter" SourceName="dot">
                             <BeginStoryboard>
@@ -15,7 +15,7 @@
                                         Storyboard.TargetProperty="Opacity"
                                         From="1"
                                         To="0.5"
-                                        Duration="0:0:0.3" />
+                                        Duration="0:0:0.2" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -28,7 +28,7 @@
                                         Storyboard.TargetProperty="Opacity"
                                         From="0.5"
                                         To="1"
-                                        Duration="0:0:0.3" />
+                                        Duration="0:0:0.2" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>

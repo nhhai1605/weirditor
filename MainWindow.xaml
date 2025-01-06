@@ -43,7 +43,7 @@
     <DockPanel Background="{StaticResource PrimaryBrush}">
         <DockPanel DockPanel.Dock="Top" PreviewMouseLeftButtonDown="Menu_OnMouseLeftButtonDown">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Center"
-                        VerticalAlignment="Center" Margin="4">
+                        VerticalAlignment="Center" Margin="8">
                 <Button Width="12" Height="12" Margin="0,0,8,0"
                         ToolTip="Minimize"
                         Background="{StaticResource  WarningBrush}"

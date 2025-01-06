@@ -5,18 +5,30 @@
     <Color x:Key="TextColor">#F5EFE7</Color>
     <Color x:Key="PrimaryColor">#213555</Color>
     <Color x:Key="SecondaryColor">#3E5879</Color>
+    <Color x:Key="TertiaryColor">#4D6E92</Color>
     <Color x:Key="BackgroundColor">#1f2736</Color>
     <Color x:Key="ErrorColor">#EF4444</Color>
+    <Color x:Key="LighterErrorColor">#F87171</Color>
     <Color x:Key="SuccessColor">#10B981</Color>
+    <Color x:Key="LighterSuccessColor">#34D399</Color>
     <Color x:Key="WarningColor">#F59E0B</Color>
+    <Color x:Key="LighterWarningColor">#FBBF24</Color>
+    <Color x:Key="DisableColor">#FF707070</Color>
 
     <!-- Define SolidColorBrush resources using Color resources -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}" />
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource TertiaryColor}" />
     <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}" />
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
+    <SolidColorBrush x:Key="LighterErrorBrush" Color="{StaticResource LighterErrorColor}" />
     <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="LighterSuccessBrush" Color="{StaticResource LighterSuccessColor}" />
     <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="LighterWarningBrush" Color="{StaticResource LighterWarningColor}" />
+    <SolidColorBrush x:Key="DisableBrush" Color="{StaticResource DisableColor}" />
+    
+    <FontFamily x:Key="FontFamily">/Fonts/#JetBrains Mono</FontFamily>
 
 </ResourceDictionary>
