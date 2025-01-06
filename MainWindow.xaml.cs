@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using weirditor.Models;
 using weirditor.ViewModels;
 
@@ -59,5 +60,29 @@ public partial class MainWindow : Window
     {
         ExplorerModel selectedItem = (ExplorerModel) ((MenuItem) sender).DataContext;
         MainWindowView.ExplorerTree_ItemDeleteCommand.Execute(selectedItem);
+    }
+
+    private void Menu_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.Source is Menu && e.LeftButton == MouseButtonState.Pressed)
+        {
+            DragMove();
+            e.Handled = true;
+        }
+    }
+    
+    private void Menu_CloseButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+
+    private void Menu_MinimizeButton_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    private void Menu_MaximizeButton_Click(object sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal  : WindowState.Maximized; 
     }
 }

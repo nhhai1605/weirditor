@@ -36,11 +36,11 @@
             <win:FontStyle>Oblique</win:FontStyle>
         </x:Array>
         
-        <ObjectDataProvider x:Key="ThemeOptions" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type Type="core:Themes"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+        <!-- <ObjectDataProvider x:Key="ThemeOptions" MethodName="GetValues" ObjectType="{x:Type sys:Enum}"> -->
+        <!--     <ObjectDataProvider.MethodParameters> -->
+        <!--         <x:Type Type="core:Themes"/> -->
+        <!--     </ObjectDataProvider.MethodParameters> -->
+        <!-- </ObjectDataProvider> -->
         
     </Window.Resources>
     <Grid>
@@ -48,7 +48,7 @@
             <RowDefinition/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <!-- <RowDefinition Height="auto"/> -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -88,11 +88,11 @@
                       SelectedItem="{Binding Format.Weight}"
                       SelectedIndex="0"/>
         </StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
-            <TextBlock>Theme</TextBlock>
-            <ComboBox ItemsSource="{Binding Source={StaticResource ThemeOptions}}"
-                      SelectedItem="{Binding Format.Theme}"
-                      SelectedIndex="0"/>
-        </StackPanel>
+        <!-- <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"> -->
+        <!--     <TextBlock>Theme</TextBlock> -->
+        <!--     <ComboBox ItemsSource="{Binding Source={StaticResource ThemeOptions}}" -->
+        <!--               SelectedItem="{Binding Format.Theme}" -->
+        <!--               SelectedIndex="0"/> -->
+        <!-- </StackPanel> -->
     </Grid>
 </Window>

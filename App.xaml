@@ -5,6 +5,12 @@
              DispatcherUnhandledException="App_DispatcherUnhandledException"
              Startup="App_OnStartup">
     <Application.Resources>
-        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/CustomButton.xaml"/>
+                <ResourceDictionary Source="Styles/MenuActionButton.xaml"/>
+                <ResourceDictionary Source="Styles/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
