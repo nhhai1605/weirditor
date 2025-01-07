@@ -9,6 +9,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:converters="clr-namespace:weirditor.Converters"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:core="clr-namespace:weirditor.Core"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
@@ -98,8 +99,43 @@
                 <ColumnDefinition Width="*" /> <!-- Editor --> <!-- The rest of the space -->
             </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0" Width="200"
-                       Visibility="{Binding ExploreView.ExplorerSetting.IsExplorerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel 
+                Grid.Column="0" >
+                <DockPanel.Style>
+                    <Style TargetType="DockPanel">
+                        <Style.Triggers>
+                            <!-- Trigger when IsExplorerVisible is True -->
+                            <DataTrigger Binding="{Binding ExploreView.ExplorerSetting.IsExplorerVisible}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Width"
+                                                From="0"
+                                                To="{x:Static core:Constants.ExplorerWidth}" 
+                                                SpeedRatio="{x:Static core:Constants.ExplorerExpandSpeedRatio}"
+                                                Duration="{x:Static core:Constants.ExplorerExpandDuration}"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <!-- Trigger when IsExplorerVisible is False with ExitAction -->
+                                <!-- ExitActions: Executes the actions when the trigger condition is no longer met (i.e., IsExplorerVisible changes to False) -->
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="Width"
+                                                From="{x:Static core:Constants.ExplorerWidth}" 
+                                                To="0"
+                                                SpeedRatio="{x:Static core:Constants.ExplorerExpandSpeedRatio}"
+                                                Duration="{x:Static core:Constants.ExplorerExpandDuration}"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DockPanel.Style>
                 <!-- ParentExplorer Name -->
                 <ContentControl DockPanel.Dock="Top" Margin="0,2">
                     <ContentControl.Style>
