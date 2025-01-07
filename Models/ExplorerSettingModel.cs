@@ -8,7 +8,7 @@ namespace weirditor.Models;
 
 public class ExplorerSettingModel : ObservableObject
 {
-    private GridLength _explorerColumnWidth = new GridLength(Constants.ExplorerWidth);
+    private GridLength _explorerColumnWidth = new GridLength(Config.ExplorerWidth);
     public GridLength ExplorerColumnWidth
     {
         get => _explorerColumnWidth;
