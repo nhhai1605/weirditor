@@ -16,6 +16,7 @@ public partial class App : Application
     private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
     {
         MessageBox.Show("An unhandled exception just occurred: " + e.Exception, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        Console.Error.WriteLine(e.Exception);
         e.Handled = true;
     }
 }

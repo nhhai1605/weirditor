@@ -47,16 +47,19 @@
                 <Button Width="12" Height="12" Margin="0,0,8,0"
                         ToolTip="Minimize"
                         Background="{StaticResource  WarningBrush}"
+                        Tag="{StaticResource  LighterWarningBrush}"
                         Click="Menu_MinimizeButton_Click"
                         Style="{StaticResource MenuActionButton}" />
                 <Button Width="12" Height="12"
                         ToolTip="Maximize"
                         Background="{StaticResource  SuccessBrush}"
+                        Tag="{StaticResource  LighterSuccessBrush}"
                         Click="Menu_MaximizeButton_Click"
                         Style="{StaticResource MenuActionButton}" />
                 <Button Width="12" Height="12" Margin="8,0,0,0"
                         ToolTip="Close"
                         Background="{StaticResource  ErrorBrush}"
+                        Tag="{StaticResource  LighterErrorBrush}"
                         Click="Menu_CloseButton_Click"
                         Style="{StaticResource MenuActionButton}" />
             </StackPanel>

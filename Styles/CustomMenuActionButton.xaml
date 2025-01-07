@@ -7,31 +7,16 @@
                 <ControlTemplate TargetType="Button">
                     <Ellipse x:Name="dot" Fill="{TemplateBinding Background}" StrokeThickness="0"/>
                     <ControlTemplate.Triggers>
-                        <EventTrigger RoutedEvent="Ellipse.MouseEnter" SourceName="dot">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="dot"
-                                        Storyboard.TargetProperty="Opacity"
-                                        From="1"
-                                        To="0.5"
-                                        Duration="0:0:0.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-
-                        <EventTrigger RoutedEvent="Ellipse.MouseLeave" SourceName="dot">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="dot"
-                                        Storyboard.TargetProperty="Opacity"
-                                        From="0.5"
-                                        To="1"
-                                        Duration="0:0:0.2" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
+                        <!-- Hover Trigger -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="dot" Property="Fill">
+                                <!-- Cannot simply use: <Setter TargetName="dot" Property="Fill" Value="{TemplateBinding Tag}" /> -->
+                                <!-- Using Binding inside Setter.Value allows dynamic property values based on the parent control's property -->
+                                <Setter.Value>
+                                    <Binding Path="Tag" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
