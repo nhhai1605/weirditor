@@ -373,7 +373,7 @@ public class MainWindowViewModel
     
     private void ExplorerVisibilityControl()
     {
-        ExploreView.ExplorerSetting.IsExplorerVisible = !ExploreView.ExplorerSetting.IsExplorerVisible;
+        ExploreView.ExplorerSetting.ExplorerColumnWidth = ExploreView.ExplorerSetting.ExplorerColumnWidth.Value == 0 ? new GridLength(Constants.ExplorerWidth) : new GridLength(0);
     } 
     
     private void ExplorerTree_SelectedItemChanged(object? parameter)

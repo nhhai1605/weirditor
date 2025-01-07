@@ -22,7 +22,7 @@
         MinHeight="300">
     <Window.Resources>
         <converters:FileExplorerIconConverter x:Key="FileExplorerIconConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:GridLengthToBooleanConverter x:Key="GridLengthToBooleanConverter" />
     </Window.Resources>
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
@@ -84,7 +84,7 @@
                     <MenuItem Header="View" Style="{StaticResource CustomMenuItemParentStyle}">
                         <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}"
                                   InputGestureText="Ctrl+E"
-                                  IsChecked="{Binding ExploreView.ExplorerSetting.IsExplorerVisible}" />
+                                  IsChecked="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Converter={StaticResource GridLengthToBooleanConverter}}" />
                     </MenuItem>
                     <MenuItem Header="Setting" Style="{StaticResource CustomMenuItemParentStyle}">
                         <MenuItem Header="Format" Command="{Binding FormatCommand}" />
@@ -97,7 +97,7 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" /> <!-- Explorer --> <!-- Column size based on its content -->
+                <ColumnDefinition Width="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Mode=TwoWay}" /> <!-- Explorer --> <!-- Column size based on its content -->
                 <ColumnDefinition Width="Auto" /> <!-- For the GridSplitter -->
                 <ColumnDefinition Width="*" /> <!-- Editor --> <!-- * for the rest of the space -->
             </Grid.ColumnDefinitions>

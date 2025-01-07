@@ -106,7 +106,7 @@ namespace weirditor.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException("ConvertBack is not supported for FileExplorerIconConverter.");
+            throw new NotSupportedException("ConvertBack is not implemented.");
         }
     }
 }

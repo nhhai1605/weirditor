@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using ICSharpCode.AvalonEdit;
 using weirditor.Core;
 
@@ -7,11 +8,11 @@ namespace weirditor.Models;
 
 public class ExplorerSettingModel : ObservableObject
 {
-    private bool _isExplorerVisible = true;
-    public bool IsExplorerVisible
+    private GridLength _explorerColumnWidth = new GridLength(Constants.ExplorerWidth);
+    public GridLength ExplorerColumnWidth
     {
-        get => _isExplorerVisible;
-        set => OnPropertyChanged(ref _isExplorerVisible, value);
+        get => _explorerColumnWidth;
+        set => OnPropertyChanged(ref _explorerColumnWidth, value);
     }
 }
 
