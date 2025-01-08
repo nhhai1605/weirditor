@@ -36,7 +36,7 @@ public class ExplorerModel : ObservableObject
     
     private FileSystemWatcher? _fileSystemWatcher;
     
-    public ExplorerModel(string path)
+    public ExplorerModel(string? path = null)
     {
         Children = new ObservableCollection<ExplorerModel>();
         if (!string.IsNullOrEmpty(path))

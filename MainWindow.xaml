@@ -24,6 +24,7 @@
     <Window.Resources>
         <converters:FileExplorerIconConverter x:Key="FileExplorerIconConverter" />
         <converters:GridLengthToBooleanConverter x:Key="GridLengthToBooleanConverter" />
+        <converters:ParentExplorerToVisibilityConverter x:Key="ParentExplorerToVisibilityConverter" />
     </Window.Resources>
     <Window.DataContext>
         <viewModels:MainWindowViewModel />
@@ -141,67 +142,40 @@
             <DockPanel Grid.Column="0">
                 <!-- ParentExplorer Name -->
                 <!-- Use ContentControl to conditional display/hide the content -->
-                <ContentControl DockPanel.Dock="Top">
-                    <ContentControl.Style>
-                        <Style TargetType="ContentControl">
-                            <Setter Property="Content">
-                                <Setter.Value>
-                                    <StackPanel Orientation="Horizontal" Margin="4" FlowDirection="RightToLeft">
-                                        <Button
-                                            Command="{Binding LoadParentDirectoryCommand}"
-                                            ToolTip="New File"
-                                            Style="{StaticResource CustomButtonStyle}">
-                                            <Button.Content>
-                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                Icon="FileOutline" />
-                                            </Button.Content>
-                                        </Button>
-                                        <Button
-                                            Command="{Binding LoadParentDirectoryCommand}"
-                                            ToolTip="New Folder"
-                                            Style="{StaticResource CustomButtonStyle}">
-                                            <Button.Content>
-                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                Icon="FolderOutline" />
-                                            </Button.Content>
-                                        </Button>
-                                        <Button
-                                            Command="{Binding LoadParentDirectoryCommand}"
-                                            ToolTip="Open Folder"
-                                            Style="{StaticResource CustomButtonStyle}">
-                                            <Button.Content>
-                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                Icon="FolderOutlinepenOutline" />
-                                            </Button.Content>
-                                        </Button>
-                                    </StackPanel>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <!-- Show Button if ParentExplorer.Name is empty -->
-                                <DataTrigger Binding="{Binding ExploreView.ParentExplorer.Name}" Value="">
-                                    <Setter Property="Content">
-                                        <Setter.Value>
-                                            <StackPanel Orientation="Horizontal" Margin="4" FlowDirection="RightToLeft">
-                                                <Button
-                                                    Command="{Binding LoadParentDirectoryCommand}"
-                                                    ToolTip="Open Folder"
-                                                    Style="{StaticResource CustomButtonStyle}">
-                                                    <Button.Content>
-                                                        <fa:FontAwesome HorizontalAlignment="Center"
-                                                                        VerticalAlignment="Center"
-                                                                        Icon="FolderOutlinepenOutline" />
-                                                    </Button.Content>
-                                                </Button>
-                                            </StackPanel>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
-
+               <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="4" FlowDirection="RightToLeft">
+                    <Button
+                        Command="{Binding LoadParentDirectoryCommand}"
+                        ToolTip="Open Folder"
+                        Style="{StaticResource CustomButtonStyle}">
+                        <Button.Content>
+                            <fa:FontAwesome HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Icon="FolderOutlinepenOutline" />
+                        </Button.Content>
+                    </Button>
+                   <Button
+                       Command="{Binding LoadParentDirectoryCommand}"
+                       ToolTip="New Folder"
+                       Visibility="{Binding ExploreView.ParentExplorer, Converter={StaticResource ParentExplorerToVisibilityConverter}}"
+                       Style="{StaticResource CustomButtonStyle}">
+                       <Button.Content>
+                           <fa:FontAwesome HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Icon="FolderOutline" />
+                       </Button.Content>
+                   </Button>
+                   <Button
+                       Command="{Binding LoadParentDirectoryCommand}"
+                       ToolTip="New File"
+                       Visibility="{Binding ExploreView.ParentExplorer, Converter={StaticResource ParentExplorerToVisibilityConverter}}"
+                       Style="{StaticResource CustomButtonStyle}">
+                       <Button.Content>
+                           <fa:FontAwesome HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Icon="FileOutline" />
+                       </Button.Content>
+                   </Button>
+               </StackPanel>
                 <!-- Explorer -->
                 <TreeView ItemsSource="{Binding ExploreView.ParentExplorer}">
                     <TreeView.ItemContainerStyle>
@@ -263,7 +237,7 @@
 
             <!-- GridSplitter -->
             <GridSplitter
-                HorizontalAlignment="Right"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Stretch"
                 Grid.Column="1" ResizeBehavior="PreviousAndNext"
                 Width="4" Background="Transparent" />

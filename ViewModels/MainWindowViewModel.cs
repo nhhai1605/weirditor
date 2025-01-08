@@ -364,13 +364,10 @@ public class MainWindowViewModel
         var openFolderDialog = new OpenFolderDialog();
         if (openFolderDialog.ShowDialog() == true)
         {
-            if (ExploreView.ParentExplorer.Count > 0)
+            ExplorerModel? parentExplorer = ExploreView.ParentExplorer.FirstOrDefault();
+            if (openFolderDialog.FolderName != parentExplorer?.Path) //Prevent reloading the same directory
             {
-                ExplorerModel parentExplorer = ExploreView.ParentExplorer[0];
-                if (openFolderDialog.FolderName != parentExplorer.Path) //Prevent reloading the same directory
-                {
-                    ExploreView.ParentExplorerLoadDirectory(openFolderDialog.FolderName);
-                }
+                ExploreView.ParentExplorerLoadDirectory(openFolderDialog.FolderName);
             }
         }
     } 
