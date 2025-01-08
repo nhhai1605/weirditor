@@ -9,8 +9,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:converters="clr-namespace:weirditor.Converters"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:core="clr-namespace:weirditor.Core"
-        xmlns:helpers="clr-namespace:weirditor.Helpers"
+        xmlns:controls="clr-namespace:weirditor.Controls"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
@@ -74,7 +73,7 @@
                             Click="Menu_CloseButton_Click"
                             Style="{StaticResource MenuActionButton}" />
                 </StackPanel>
-                <Menu Style="{StaticResource CustomMenu}">
+                <controls:CustomMenu >
                     <Menu.Items>
                         <!-- Padding on MenuItems -->
                         <MenuItem Header="File">
@@ -100,20 +99,50 @@
                                       IsChecked="{Binding Format.Wrap}" />
                         </MenuItem>
                     </Menu.Items>
-                </Menu>
+                </controls:CustomMenu>
             </DockPanel>
         </Border>
 
         <!-- Bottom Status Bar -->
         <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BackgroundBrush}">
-            <DockPanel>
-                <Menu helpers:CustomMenuHelper.PopupPlacement="Top" Style="{StaticResource CustomMenu}">
-                    <Menu.Items>
-                        <MenuItem Header="Status">
-                            <MenuItem Header="Line: 1, Column: 1" />
-                        </MenuItem>
-                    </Menu.Items>
-                </Menu>
+            <DockPanel Name="StatusPanel">
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <!-- Breadcrumb Item 1 -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Home" />
+                        <Popup x:Name="PopupHome" StaysOpen="False" Placement="Bottom">
+                            <Border Background="LightGray" Padding="10">
+                                <TextBlock Text="This is the Home popup." />
+                            </Border>
+                        </Popup>
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0"/>
+
+                    <!-- Breadcrumb Item 2 -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Documents" />
+                        <Popup x:Name="PopupDocuments" StaysOpen="False" Placement="Bottom">
+                            <Border Background="LightGray" Padding="10">
+                                <TextBlock Text="This is the Documents popup." />
+                            </Border>
+                        </Popup>
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0"/>
+
+                    <!-- Breadcrumb Item 3 -->
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Settings"  />
+                        <Popup x:Name="PopupSettings" StaysOpen="False" Placement="Bottom">
+                            <Border Background="LightGray" Padding="10">
+                                <TextBlock Text="This is the Settings popup." />
+                            </Border>
+                        </Popup>
+                    </StackPanel>
+                </StackPanel>
             </DockPanel>
         </Border>
 

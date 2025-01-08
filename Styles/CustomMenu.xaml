@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:helpers="clr-namespace:weirditor.Helpers">
+                    xmlns:controls="clr-namespace:weirditor.Controls">
     <!-- MenuItem Style -->
     <Style TargetType="MenuItem" x:Key="CustomMenuItemChildStyle">
         <Setter Property="FontFamily" Value="{StaticResource FontFamily}"/>
@@ -80,7 +80,7 @@
                             <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                 IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                                Placement="{Binding RelativeSource={RelativeSource AncestorType={x:Type Menu}}, Path=(helpers:CustomMenuHelper.PopupPlacement)}">
+                                Placement="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:CustomMenu}}, Path=PopupPlacement}">
                                 <Border 
                                     x:Name="SubMenuBorder"
                                     BorderThickness="1"  
@@ -144,7 +144,7 @@
     </Style>
     
     <!-- Menu Style -->
-    <Style TargetType="Menu" x:Key="CustomMenu">
+    <Style TargetType="{x:Type controls:CustomMenu}">
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
         <Setter Property="ItemContainerStyle" Value="{StaticResource CustomMenuItemParentStyle}" />
     </Style>
