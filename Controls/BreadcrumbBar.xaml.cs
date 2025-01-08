@@ -42,6 +42,21 @@ public partial class BreadcrumbBar : UserControl
             itemContext.IsPopupOpen = true;
         }
     }
+
+    public void SetBreadcrumb(string path)
+    {
+        BreadcrumbItems.Clear();
+        var pathParts = path.Split('\\');
+        // only take after name of the parent folder
+        for (int i = 0; i < pathParts.Length; i++)
+        {
+            BreadcrumbItems.Add(new BreadcrumbItem
+            {
+                Text = pathParts[i],
+                IsLastItem = i == pathParts.Length - 1
+            });
+        }
+    }
 }
 
 public class BreadcrumbItem : INotifyPropertyChanged

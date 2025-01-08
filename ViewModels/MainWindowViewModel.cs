@@ -8,6 +8,7 @@ using System.Windows.Media.Animation;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Win32;
+using weirditor.Controls;
 using weirditor.Converters;
 using weirditor.Core;
 using weirditor.Models;
@@ -17,6 +18,7 @@ namespace weirditor.ViewModels;
 public class MainWindowViewModel
 {
     public TabControl? EditorTabControl { get; set; }
+    public BreadcrumbBar? BreadcrumbBarControl { get; set; }
     public List<DocumentViewModel> DocumentViewList { get; set; }
     public ExplorerViewModel ExploreView { get; set; }
     public FormatModel Format { get; set; }
@@ -57,7 +59,17 @@ public class MainWindowViewModel
         LoadParentDirectoryCommand = new RelayCommand((_) => LoadParentDirectory());
         ExplorerVisibilityCommand = new RelayCommand((_) => ExplorerVisibilityControl());
         ExplorerTree_SelectedItemChangedCommand = new RelayCommand((parameter) => ExplorerTree_SelectedItemChanged(parameter));
+        
+        // Use this to wait for the control to fully initialized before adding the SelectionChanged event
+        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+        {
+            if (EditorTabControl != null)
+            {
+                EditorTabControl.SelectionChanged += (sender, e) => UpdateBreadcrumb();
+            }
+        }), System.Windows.Threading.DispatcherPriority.Loaded);
     }
+    
     private void OpenStyleDialog()
     {
         var fontDialog = new FontDialog();
@@ -145,8 +157,8 @@ public class MainWindowViewModel
         };
         
         //Add tabItem before adding CloseTab()
+        DocumentViewList.Add(documentView); //Add to list before add to EditorTabControl.Items
         EditorTabControl?.Items.Add(tabItem);
-        DocumentViewList.Add(documentView);
         
         TextBlock headerTextBlock = new TextBlock
         {
@@ -221,7 +233,7 @@ public class MainWindowViewModel
         tabItem.Header = header;
         tabItem.Content = editorAndPlaceholderContainer;
         
-        // Use this to wait for the UI to update before focusing the text editor
+        // Use this to wait for the control to fully initialized before focusing the text editor
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
         {
             documentView.TextEditor.Focus();
@@ -275,7 +287,6 @@ public class MainWindowViewModel
         documentView.TextEditor.Save(documentView.Document.FilePath);
         documentView.OnSavedDocument();
     }
-    
     
     private void SaveFile()
     {
@@ -395,6 +406,20 @@ public class MainWindowViewModel
                 }
             }
             NewFile(selectedItem.Path);
+        }
+    }
+    
+    private void UpdateBreadcrumb()
+    {
+        if (EditorTabControl?.SelectedIndex >= 0 && DocumentViewList.Count > 0)
+        {
+            var documentView = DocumentViewList[EditorTabControl.SelectedIndex];
+            var parentFolderName = ExploreView.ParentExplorer.FirstOrDefault()?.Name;
+            if (parentFolderName != null)
+            {
+                var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
+                BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
+            }
         }
     }
     

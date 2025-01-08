@@ -105,12 +105,8 @@
 
         <!-- Bottom Status Bar -->
         <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BackgroundBrush}">
-            <DockPanel Name="StatusPanel">
+            <DockPanel>
                 <controls:BreadcrumbBar x:Name="BreadcrumbBarControl">
-                    <controls:BreadcrumbBar.BreadcrumbItems>
-                        <controls:BreadcrumbItem Text="Test1" PopupContent="Test1" />
-                        <controls:BreadcrumbItem Text="Test2" PopupContent="Test2" IsLastItem="True"/>
-                    </controls:BreadcrumbBar.BreadcrumbItems>
                 </controls:BreadcrumbBar>
             </DockPanel>
         </Border>
@@ -241,7 +237,7 @@
                 Width="4" Background="Transparent" />
 
             <!-- Editor -->
-            <TabControl Grid.Column="2" Name="EditorTabControl" />
+            <TabControl Grid.Column="2" Name="EditorTabControl"/>
 
         </Grid>
     </DockPanel>
