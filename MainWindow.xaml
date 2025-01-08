@@ -108,28 +108,8 @@
             <DockPanel>
                 <Menu helpers:CustomMenuHelper.PopupPlacement="Top" Style="{StaticResource CustomMenu}">
                     <Menu.Items>
-                        <!-- Padding on MenuItems -->
-                        <MenuItem Header="File">
-                            <MenuItem Header="New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N" />
-                            <MenuItem Header="Open" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
-                            <MenuItem Header="Open Folder" Command="{Binding LoadParentDirectoryCommand}"
-                                      InputGestureText="Ctrl+Shift+O" />
-                            <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
-                            <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}"
-                                      InputGestureText="Ctrl+Alt+S" />
-                            <MenuItem Header="Save all" Command="{Binding SaveAllCommand}"
-                                      InputGestureText="Ctrl+Shift+S" />
-                            <MenuItem Header="Delete" Command="{Binding DeleteCurrentFileCommand}" />
-                        </MenuItem>
-                        <MenuItem Header="View">
-                            <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}"
-                                      InputGestureText="Ctrl+E"
-                                      IsChecked="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Converter={StaticResource GridLengthToBooleanConverter}}" />
-                        </MenuItem>
-                        <MenuItem Header="Setting">
-                            <MenuItem Header="Format" Command="{Binding FormatCommand}" />
-                            <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}"
-                                      IsChecked="{Binding Format.Wrap}" />
+                        <MenuItem Header="Status">
+                            <MenuItem Header="Line: 1, Column: 1" />
                         </MenuItem>
                     </Menu.Items>
                 </Menu>
@@ -137,13 +117,13 @@
         </Border>
 
         <Border DockPanel.Dock="Left" BorderThickness="0,0,1,0" BorderBrush="{StaticResource BackgroundBrush}">
-            <DockPanel Width="16">
+            <DockPanel Width="24">
 
             </DockPanel>
         </Border>
 
         <Border DockPanel.Dock="Right" BorderThickness="1,0,0,0" BorderBrush="{StaticResource BackgroundBrush}">
-            <DockPanel Width="16">
+            <DockPanel Width="24">
 
             </DockPanel>
         </Border>
@@ -160,56 +140,41 @@
 
             <DockPanel Grid.Column="0">
                 <!-- ParentExplorer Name -->
-                <ContentControl DockPanel.Dock="Top" Margin="0,2">
+                <!-- Use ContentControl to conditional display/hide the content -->
+                <ContentControl DockPanel.Dock="Top">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Setter Property="Content">
                                 <Setter.Value>
-                                    <DockPanel>
-                                        <!-- TODO: Add Button for New File, .etc here -->
-                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                                            <StackPanel.Resources>
-                                                <Style TargetType="{x:Type Button}">
-                                                    <Setter Property="Margin" Value="2,0,0,0" />
-                                                </Style>
-                                            </StackPanel.Resources>
-                                            <Button
-                                                Command="{Binding LoadParentDirectoryCommand}"
-                                                ToolTip="New File"
-                                                Width="20"
-                                                Height="20">
-                                                <Button.Content>
-                                                    <fa:FontAwesome Icon="FileOutline" />
-                                                </Button.Content>
-                                            </Button>
-                                            <Button
-                                                Command="{Binding LoadParentDirectoryCommand}"
-                                                ToolTip="New Folder"
-                                                Width="20"
-                                                Height="20">
-                                                <Button.Content>
-                                                    <fa:FontAwesome Icon="FolderOutline" />
-                                                </Button.Content>
-                                            </Button>
-                                            <Button
-                                                Command="{Binding LoadParentDirectoryCommand}"
-                                                ToolTip="Open Folder"
-                                                Width="20"
-                                                Height="20">
-                                                <Button.Content>
-                                                    <fa:FontAwesome Icon="FolderOutlinepenOutline" />
-                                                </Button.Content>
-                                            </Button>
-                                        </StackPanel>
-
-                                        <TextBlock
-                                            Text="{Binding ExploreView.ParentExplorer.Name}"
-                                            ToolTip="{Binding ExploreView.ParentExplorer.Path}"
-                                            FontWeight="Bold"
-                                            FontSize="14"
-                                            Margin="4,0"
-                                            VerticalAlignment="Center" />
-                                    </DockPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="4" FlowDirection="RightToLeft">
+                                        <Button
+                                            Command="{Binding LoadParentDirectoryCommand}"
+                                            ToolTip="New File"
+                                            Style="{StaticResource CustomButtonStyle}">
+                                            <Button.Content>
+                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Icon="FileOutline" />
+                                            </Button.Content>
+                                        </Button>
+                                        <Button
+                                            Command="{Binding LoadParentDirectoryCommand}"
+                                            ToolTip="New Folder"
+                                            Style="{StaticResource CustomButtonStyle}">
+                                            <Button.Content>
+                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Icon="FolderOutline" />
+                                            </Button.Content>
+                                        </Button>
+                                        <Button
+                                            Command="{Binding LoadParentDirectoryCommand}"
+                                            ToolTip="Open Folder"
+                                            Style="{StaticResource CustomButtonStyle}">
+                                            <Button.Content>
+                                                <fa:FontAwesome HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                Icon="FolderOutlinepenOutline" />
+                                            </Button.Content>
+                                        </Button>
+                                    </StackPanel>
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
@@ -217,10 +182,18 @@
                                 <DataTrigger Binding="{Binding ExploreView.ParentExplorer.Name}" Value="">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <Button
-                                                Content="Open Folder"
-                                                Style="{StaticResource CustomButtonStyle}"
-                                                Command="{Binding LoadParentDirectoryCommand}" />
+                                            <StackPanel Orientation="Horizontal" Margin="4" FlowDirection="RightToLeft">
+                                                <Button
+                                                    Command="{Binding LoadParentDirectoryCommand}"
+                                                    ToolTip="Open Folder"
+                                                    Style="{StaticResource CustomButtonStyle}">
+                                                    <Button.Content>
+                                                        <fa:FontAwesome HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        Icon="FolderOutlinepenOutline" />
+                                                    </Button.Content>
+                                                </Button>
+                                            </StackPanel>
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
@@ -230,7 +203,7 @@
                 </ContentControl>
 
                 <!-- Explorer -->
-                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer.Children}">
+                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer}">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <!-- Handle double click on item -->
@@ -264,7 +237,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <!-- FontAwesome Icon for Folder -->
                                 <fa:FontAwesome
-                                    Width="12"
+                                    Width="122"
                                     Height="12"
                                     Margin="0,0,4,0"
                                     VerticalAlignment="Center"
@@ -296,7 +269,8 @@
                 Width="4" Background="Transparent" />
 
             <!-- Editor -->
-            <TabControl Grid.Column="2" Name="EditorTabControl" Margin="0" />
+            <TabControl Grid.Column="2" Name="EditorTabControl" />
+
         </Grid>
     </DockPanel>
 </Window>
