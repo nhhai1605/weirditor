@@ -10,6 +10,7 @@
         xmlns:converters="clr-namespace:weirditor.Converters"
         xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:core="clr-namespace:weirditor.Core"
+        xmlns:helpers="clr-namespace:weirditor.Helpers"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
@@ -44,6 +45,7 @@
         />
     </WindowChrome.WindowChrome>
     <DockPanel Background="{StaticResource PrimaryBrush}">
+        <!-- Top Menu -->
         <DockPanel DockPanel.Dock="Top" PreviewMouseLeftButtonDown="Menu_OnMouseLeftButtonDown">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Center"
                         VerticalAlignment="Center" Margin="8">
@@ -66,10 +68,10 @@
                         Click="Menu_CloseButton_Click"
                         Style="{StaticResource MenuActionButton}" />
             </StackPanel>
-            <Menu Background="{StaticResource  PrimaryBrush}">
+            <Menu Style="{StaticResource CustomMenu}">
                 <Menu.Items>
                     <!-- Padding on MenuItems -->
-                    <MenuItem Header="File" Style="{StaticResource CustomMenuItemParentStyle}">
+                    <MenuItem Header="File">
                         <MenuItem Header="New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"/>
                         <MenuItem Header="Open" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
                         <MenuItem Header="Open Folder" Command="{Binding LoadParentDirectoryCommand}"
@@ -81,12 +83,12 @@
                                   InputGestureText="Ctrl+Shift+S" />
                         <MenuItem Header="Delete" Command="{Binding DeleteCurrentFileCommand}" />
                     </MenuItem>
-                    <MenuItem Header="View" Style="{StaticResource CustomMenuItemParentStyle}">
+                    <MenuItem Header="View">
                         <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}"
                                   InputGestureText="Ctrl+E"
                                   IsChecked="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Converter={StaticResource GridLengthToBooleanConverter}}" />
                     </MenuItem>
-                    <MenuItem Header="Setting" Style="{StaticResource CustomMenuItemParentStyle}">
+                    <MenuItem Header="Setting">
                         <MenuItem Header="Format" Command="{Binding FormatCommand}" />
                         <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}"
                                   IsChecked="{Binding Format.Wrap}" />
@@ -94,11 +96,43 @@
                 </Menu.Items>
             </Menu>
         </DockPanel>
-
+        
+        <!-- Bottom Status Bar -->
+        <DockPanel DockPanel.Dock="Bottom">
+            <Menu helpers:CustomMenuHelper.PopupPlacement="Top" Style="{StaticResource CustomMenu}">
+                <Menu.Items>
+                    <!-- Padding on MenuItems -->
+                    <MenuItem Header="File">
+                        <MenuItem Header="New" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"/>
+                        <MenuItem Header="Open" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O" />
+                        <MenuItem Header="Open Folder" Command="{Binding LoadParentDirectoryCommand}"
+                                  InputGestureText="Ctrl+Shift+O" />
+                        <MenuItem Header="Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
+                        <MenuItem Header="Save as..." Command="{Binding SaveAsCommand}"
+                                  InputGestureText="Ctrl+Alt+S" />
+                        <MenuItem Header="Save all" Command="{Binding SaveAllCommand}"
+                                  InputGestureText="Ctrl+Shift+S" />
+                        <MenuItem Header="Delete" Command="{Binding DeleteCurrentFileCommand}" />
+                    </MenuItem>
+                    <MenuItem Header="View">
+                        <MenuItem Header="File Explorer" Command="{Binding ExplorerVisibilityCommand}"
+                                  InputGestureText="Ctrl+E"
+                                  IsChecked="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Converter={StaticResource GridLengthToBooleanConverter}}" />
+                    </MenuItem>
+                    <MenuItem Header="Setting">
+                        <MenuItem Header="Format" Command="{Binding FormatCommand}" />
+                        <MenuItem Header="Word Wrap" Command="{Binding WrapCommand}"
+                                  IsChecked="{Binding Format.Wrap}" />
+                    </MenuItem>
+                </Menu.Items>
+            </Menu>
+        </DockPanel>
+        
+        <!-- Main Content -->
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding ExploreView.ExplorerSetting.ExplorerColumnWidth, Mode=TwoWay}" /> <!-- Explorer --> <!-- Column size based on its content -->
-                <ColumnDefinition Width="Auto" /> <!-- For the GridSplitter -->
+                <ColumnDefinition Width="Auto" /> <!-- For the GridSplitter, used for resizing -->
                 <ColumnDefinition Width="*" /> <!-- Editor --> <!-- * for the rest of the space -->
             </Grid.ColumnDefinitions>
 
@@ -232,6 +266,7 @@
                 </TreeView>
             </DockPanel>
             
+            <!-- GridSplitter -->
             <GridSplitter 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Stretch" 
