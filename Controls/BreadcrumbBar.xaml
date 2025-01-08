@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="weirditor.Controls.BreadcrumbBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             x:Name="BreadcrumbBarControl"
+             mc:Ignorable="d"
+             Height="Auto" Width="Auto">
+    <StackPanel Orientation="Horizontal" Margin="16">
+        <!-- Breadcrumb Items will be dynamically added here -->
+        <ItemsControl ItemsSource="{Binding BreadcrumbItems, ElementName=BreadcrumbBarControl}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Background="{StaticResource PrimaryBrush}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Breadcrumb Button -->
+                        <Button Content="{Binding Text}" Click="Button_Click" />
+                        <!-- Popup -->
+                        <Popup StaysOpen="False" Placement="Top" IsOpen="{Binding IsPopupOpen}">
+                            <Border Background="LightGray" Padding="10">
+                                <TextBlock Text="{Binding PopupContent}" />
+                            </Border>
+                        </Popup>
+                    
+                        <!-- Separator -->
+                        <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLastItem}" Value="True">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

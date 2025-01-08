@@ -73,7 +73,7 @@
                             Click="Menu_CloseButton_Click"
                             Style="{StaticResource MenuActionButton}" />
                 </StackPanel>
-                <controls:CustomMenu >
+                <Menu Style="{StaticResource CustomMenu}">
                     <Menu.Items>
                         <!-- Padding on MenuItems -->
                         <MenuItem Header="File">
@@ -99,50 +99,19 @@
                                       IsChecked="{Binding Format.Wrap}" />
                         </MenuItem>
                     </Menu.Items>
-                </controls:CustomMenu>
+                </Menu>
             </DockPanel>
         </Border>
 
         <!-- Bottom Status Bar -->
         <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BackgroundBrush}">
             <DockPanel Name="StatusPanel">
-                <StackPanel Orientation="Horizontal" Margin="10">
-                    <!-- Breadcrumb Item 1 -->
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Home" />
-                        <Popup x:Name="PopupHome" StaysOpen="False" Placement="Bottom">
-                            <Border Background="LightGray" Padding="10">
-                                <TextBlock Text="This is the Home popup." />
-                            </Border>
-                        </Popup>
-                    </StackPanel>
-
-                    <!-- Separator -->
-                    <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0"/>
-
-                    <!-- Breadcrumb Item 2 -->
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Documents" />
-                        <Popup x:Name="PopupDocuments" StaysOpen="False" Placement="Bottom">
-                            <Border Background="LightGray" Padding="10">
-                                <TextBlock Text="This is the Documents popup." />
-                            </Border>
-                        </Popup>
-                    </StackPanel>
-
-                    <!-- Separator -->
-                    <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0"/>
-
-                    <!-- Breadcrumb Item 3 -->
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Settings"  />
-                        <Popup x:Name="PopupSettings" StaysOpen="False" Placement="Bottom">
-                            <Border Background="LightGray" Padding="10">
-                                <TextBlock Text="This is the Settings popup." />
-                            </Border>
-                        </Popup>
-                    </StackPanel>
-                </StackPanel>
+                <controls:BreadcrumbBar x:Name="BreadcrumbBarControl">
+                    <controls:BreadcrumbBar.BreadcrumbItems>
+                        <controls:BreadcrumbItem Text="Test1" PopupContent="Test1" />
+                        <controls:BreadcrumbItem Text="Test2" PopupContent="Test2" IsLastItem="True"/>
+                    </controls:BreadcrumbBar.BreadcrumbItems>
+                </controls:BreadcrumbBar>
             </DockPanel>
         </Border>
 
