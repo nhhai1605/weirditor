@@ -415,7 +415,7 @@ public class MainWindowViewModel
         {
             var documentView = DocumentViewList[EditorTabControl.SelectedIndex];
             var parentFolderName = ExploreView.ParentExplorer.FirstOrDefault()?.Name;
-            if (parentFolderName != null)
+            if (!string.IsNullOrEmpty(parentFolderName))
             {
                 var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
                 BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
