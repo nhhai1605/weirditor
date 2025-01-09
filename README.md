@@ -22,3 +22,17 @@
         // Add your action here
     }), System.Windows.Threading.DispatcherPriority.Loaded);
 ```
+- Use below to set visibility based on True and False without converter (sometime we don't want simple converter BoolToVisibilityConverter)
+```xaml
+    <TextBlock Text=" > " Foreground="{StaticResource TextBrush}">
+        <TextBlock.Style>
+            <Style TargetType="TextBlock">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsLastItem}" Value="True">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </TextBlock.Style>
+    </TextBlock>
+```

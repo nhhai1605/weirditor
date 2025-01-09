@@ -11,7 +11,18 @@
         <Menu.ItemContainerStyle>
             <Style TargetType="MenuItem" BasedOn="{StaticResource CustomMenuItemParentStyle}">
                 <Setter Property="Header" Value="{Binding Text}" />
-                <Setter Property="ItemsSource" Value="{Binding Children}"/>
+                <Setter Property="ItemsSource" Value="{Binding Children}" />
+                <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                
+                <!-- This ensures child bindings inherit the same logic -->
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource CustomMenuItemChildStyle}">
+                            <Setter Property="Header" Value="{Binding Text}" />
+                            <Setter Property="ItemsSource" Value="{Binding Children}" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
             </Style>
         </Menu.ItemContainerStyle>
     </Menu>

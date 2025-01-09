@@ -41,10 +41,12 @@ public partial class BreadcrumbBar : UserControl
         // only take after name of the parent folder
         for (int i = 0; i < pathParts.Length; i++)
         {
+            //Todo: get all files in the path
             BreadcrumbItems.Add(new BreadcrumbItem
             {
                 Text = pathParts[i],
                 IsLastItem = i == pathParts.Length - 1,
+                IsEnabled = true,
                 Children = new ObservableCollection<BreadcrumbItem>
                 {
                     new BreadcrumbItem
@@ -59,6 +61,15 @@ public partial class BreadcrumbBar : UserControl
                     }
                 }
             });
+            //Now add a separator as a MenuItem that IsEnabled = false
+            if(i < pathParts.Length - 1)
+            {
+                BreadcrumbItems.Add(new BreadcrumbItem
+                {
+                    Text = ">",
+                    IsEnabled = false
+                });
+            }
         }
     }
 }
@@ -68,6 +79,7 @@ public class BreadcrumbItem : ObservableObject
     public string Text { get; set; }
     public string PopupContent { get; set; }
     public bool IsLastItem { get; set; }
+    public bool IsEnabled { get; set; }
     private bool _isPopupOpen;
 
     public bool IsPopupOpen
