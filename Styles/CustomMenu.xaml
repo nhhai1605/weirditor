@@ -77,7 +77,7 @@
                                 ContentSource="Header" Margin="{TemplateBinding Padding}"
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
+                            <Popup AllowsTransparency="True" Focusable="False"
                                 IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                                 Placement="{Binding RelativeSource={RelativeSource AncestorType={x:Type Menu}}, Path=(helpers:CustomMenuHelper.PopupPlacement)}">
@@ -85,39 +85,19 @@
                                     x:Name="SubMenuBorder"
                                     BorderThickness="1"  
                                     BorderBrush="{StaticResource SecondaryBrush}"
-                                    Background="{StaticResource SecondaryBrush}" 
+                                    Background="{StaticResource PrimaryBrush}" 
                                     Padding="0">
-                                    <ScrollViewer
-                                        x:Name="SubMenuScrollViewer"
-                                        Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}"
-                                        Margin="0" Padding="0"
-                                        Background="{StaticResource PrimaryBrush}">
-                                        <Grid RenderOptions.ClearTypeHint="Enabled">
-                                            <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top"
-                                                    Width="0">
-                                                <Rectangle
-                                                    x:Name="OpaqueRect"
-                                                    Fill="{Binding Background, ElementName=SubMenuBorder}"
-                                                    Height="{Binding ActualHeight, ElementName=SubMenuBorder}"
-                                                    Width="{Binding ActualWidth, ElementName=SubMenuBorder}" />
-                                            </Canvas>
-                                            <Rectangle Fill="{StaticResource TextBrush}" HorizontalAlignment="Left" Margin="0" Width="2" />
-                                            <ItemsPresenter
-                                                x:Name="ItemsPresenter"
-                                                KeyboardNavigation.DirectionalNavigation="Cycle"
-                                                Grid.IsSharedSizeScope="True"
-                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                KeyboardNavigation.TabNavigation="Cycle" />
-                                        </Grid>
-                                    </ScrollViewer>
+                                    <ItemsPresenter
+                                        x:Name="ItemsPresenter"
+                                        KeyboardNavigation.DirectionalNavigation="Cycle"
+                                        Grid.IsSharedSizeScope="True"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        KeyboardNavigation.TabNavigation="Cycle" />
                                 </Border>
                             </Popup>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsSuspendingPopupAnimation" Value="True">
-                            <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None" />
-                        </Trigger>
                         <!-- This is when hovered -->
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource SecondaryBrush}" />
@@ -125,12 +105,6 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource SecondaryBrush}" />
-                        </Trigger>
-                        <Trigger Property="CanContentScroll" SourceName="SubMenuScrollViewer" Value="False">
-                            <Setter Property="Canvas.Top" TargetName="OpaqueRect"
-                                    Value="{Binding VerticalOffset, ElementName=SubMenuScrollViewer}" />
-                            <Setter Property="Canvas.Left" TargetName="OpaqueRect"
-                                    Value="{Binding HorizontalOffset, ElementName=SubMenuScrollViewer}" />
                         </Trigger>
                         <!-- This is when clicked -->
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">

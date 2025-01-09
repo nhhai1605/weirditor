@@ -171,7 +171,7 @@
                    </Button>
                </StackPanel>
                 <!-- Explorer -->
-                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer}">
+                <TreeView ItemsSource="{Binding ExploreView.ParentExplorer}" x:Name="ExplorerTreeView">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="{x:Type TreeViewItem}">
                             <!-- Handle double click on item -->

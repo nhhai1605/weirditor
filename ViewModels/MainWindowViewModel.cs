@@ -199,7 +199,8 @@ public class MainWindowViewModel
                 Setters =
                 {
                     new Setter(TextBlock.ForegroundProperty, Brushes.Black),
-                    new Setter(TextBlock.FontStyleProperty, FontStyles.Normal)
+                    new Setter(TextBlock.FontStyleProperty, FontStyles.Normal),
+                    new Setter(TextBlock.FontFamilyProperty, Config.DefaultFontFamily)
                 }
             }
         };
@@ -419,11 +420,18 @@ public class MainWindowViewModel
         if (EditorTabControl?.SelectedIndex >= 0 && DocumentViewList.Count > 0)
         {
             var documentView = DocumentViewList[EditorTabControl.SelectedIndex];
-            var parentFolderName = ExploreView.ParentExplorer.FirstOrDefault()?.Name;
-            if (!string.IsNullOrEmpty(parentFolderName))
+            if (documentView.Document.IsNew)
             {
-                var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
-                BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
+                BreadcrumbBarControl?.SetBreadcrumb(documentView.Document.FileName);
+            }
+            else
+            {
+                var parentFolderName = ExploreView.ParentExplorer.FirstOrDefault()?.Name;
+                if (!string.IsNullOrEmpty(parentFolderName))
+                {
+                    var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
+                    BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
+                }    
             }
         }
         else

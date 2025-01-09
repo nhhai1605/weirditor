@@ -3,44 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:weirditor.Helpers"
              x:Name="BreadcrumbBarControl"
              mc:Ignorable="d"
              Height="Auto" Width="Auto">
-    <StackPanel Orientation="Horizontal" Margin="16">
-        <!-- Breadcrumb Items will be dynamically added here -->
-        <ItemsControl ItemsSource="{Binding BreadcrumbItems, ElementName=BreadcrumbBarControl}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Background="{StaticResource PrimaryBrush}" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- Breadcrumb Button -->
-                        <Button Style="{StaticResource CustomButtonStyle}" Content="{Binding Text}" Click="Button_Click" />
-                        <!-- Popup -->
-                        <Popup StaysOpen="False" Placement="Top" IsOpen="{Binding IsPopupOpen}">
-                            <Border Background="LightGray" Padding="8">
-                                <TextBlock Text="{Binding PopupContent}" />
-                            </Border>
-                        </Popup>
-                    
-                        <!-- Separator -->
-                        <TextBlock Text=" > " VerticalAlignment="Center"  HorizontalAlignment="Center" Margin="4,0" Foreground="{StaticResource TextBrush}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsLastItem}" Value="True">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </StackPanel>
+    <Menu Style="{StaticResource CustomMenu}" ItemsSource="{Binding BreadcrumbItems, ElementName=BreadcrumbBarControl}" helpers:CustomMenuHelper.PopupPlacement="Top" MinHeight="32">
+        <Menu.ItemContainerStyle>
+            <Style TargetType="MenuItem" BasedOn="{StaticResource CustomMenuItemParentStyle}">
+                <Setter Property="Header" Value="{Binding Text}" />
+                <Setter Property="ItemsSource" Value="{Binding Children}"/>
+            </Style>
+        </Menu.ItemContainerStyle>
+    </Menu>
 </UserControl>

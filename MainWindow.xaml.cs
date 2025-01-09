@@ -19,6 +19,7 @@ public partial class MainWindow : Window
         MainWindowView = (MainWindowViewModel) DataContext;
         MainWindowView.EditorTabControl = EditorTabControl;
         MainWindowView.BreadcrumbBarControl = BreadcrumbBarControl;
+        MainWindowView.ExplorerTreeView = ExplorerTreeView;
     }
     protected override void OnClosing(CancelEventArgs e)
     {

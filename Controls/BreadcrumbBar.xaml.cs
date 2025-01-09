@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using weirditor.Core;
 
 namespace weirditor.Controls;
 
@@ -28,20 +29,6 @@ public partial class BreadcrumbBar : UserControl
         get => (ObservableCollection<BreadcrumbItem>)GetValue(BreadcrumbItemsProperty);
         set => SetValue(BreadcrumbItemsProperty, value);
     }
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        // Close all other popups
-        foreach (var item in BreadcrumbItems)
-        {
-            item.IsPopupOpen = false;
-        }
-
-        // Open the clicked popup
-        if (sender is Button button && button.DataContext is BreadcrumbItem itemContext)
-        {
-            itemContext.IsPopupOpen = true;
-        }
-    }
 
     public void SetBreadcrumb(string path)
     {
@@ -57,34 +44,45 @@ public partial class BreadcrumbBar : UserControl
             BreadcrumbItems.Add(new BreadcrumbItem
             {
                 Text = pathParts[i],
-                IsLastItem = i == pathParts.Length - 1
+                IsLastItem = i == pathParts.Length - 1,
+                Children = new ObservableCollection<BreadcrumbItem>
+                {
+                    new BreadcrumbItem
+                    {
+                        Text = "Child 1",
+                        IsLastItem = false
+                    },
+                    new BreadcrumbItem
+                    {
+                        Text = "Child 2",
+                        IsLastItem = false
+                    }
+                }
             });
         }
     }
 }
 
-public class BreadcrumbItem : INotifyPropertyChanged
+public class BreadcrumbItem : ObservableObject
 {
-    private bool _isPopupOpen;
-
     public string Text { get; set; }
     public string PopupContent { get; set; }
     public bool IsLastItem { get; set; }
+    private bool _isPopupOpen;
 
     public bool IsPopupOpen
     {
-        get => _isPopupOpen;
+        get  { return _isPopupOpen; }
         set
         {
-            _isPopupOpen = value;
-            OnPropertyChanged();
+            OnPropertyChanged(ref _isPopupOpen, value);
+            
         }
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    public ObservableCollection<BreadcrumbItem> Children { get; set; } // For hierarchical structure
+    
+    public void Children_OnClick(object sender, RoutedEventArgs e)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        MessageBox.Show("Clicked");
     }
 }
