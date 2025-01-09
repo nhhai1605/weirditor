@@ -27,13 +27,19 @@ public class ExplorerViewModel : ObservableObject
     public void ParentExplorerLoadDirectory(string path)
     {
         Mouse.OverrideCursor = Cursors.Wait;
-        ExplorerModel? parentExplorer = ParentExplorer.FirstOrDefault();
-        parentExplorer?.LoadDirectory(path);
-        parentExplorer?.StartWatching();
-        Mouse.OverrideCursor = Cursors.Arrow;
-        //Need this to work because we don't actually change the object, we just load direction by updating path and children
-        OnPropertyChanged(nameof(ParentExplorer));
-
+        try
+        {
+            ExplorerModel? parentExplorer = ParentExplorer.FirstOrDefault();
+            parentExplorer?.LoadDirectory(path);
+            parentExplorer?.StartWatching();
+            //Need this to work because we don't actually change the object, we just load direction by updating path and children
+            OnPropertyChanged(nameof(ParentExplorer));
+        }
+        finally
+        {
+            //Override back to null instead of arrow to prevent keeping at arrow after loading
+            Mouse.OverrideCursor = null;
+        }
     }
 }
 
