@@ -19,6 +19,7 @@ public class MainWindowViewModel
 {
     public TabControl? EditorTabControl { get; set; }
     public BreadcrumbBar? BreadcrumbBarControl { get; set; }
+    public TreeView? ExplorerTreeView { get; set; }
     public List<DocumentViewModel> DocumentViewList { get; set; }
     public ExplorerViewModel ExploreView { get; set; }
     public FormatModel Format { get; set; }
@@ -379,6 +380,10 @@ public class MainWindowViewModel
             if (openFolderDialog.FolderName != parentExplorer?.Path) //Prevent reloading the same directory
             {
                 ExploreView.ParentExplorerLoadDirectory(openFolderDialog.FolderName);
+                if (ExplorerTreeView?.Items.Count > 0 && ExplorerTreeView.ItemContainerGenerator.ContainerFromIndex(0) is TreeViewItem item)
+                {
+                    item.IsExpanded = true;
+                }
             }
         }
     } 
