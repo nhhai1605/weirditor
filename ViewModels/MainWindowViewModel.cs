@@ -251,8 +251,8 @@ public class MainWindowViewModel
                 SaveFile();
             }
         }
+        DocumentViewList.Remove(documentView); //Remove from list before remove from EditorTabControl.Items
         EditorTabControl?.Items.Remove(tabItem);
-        DocumentViewList.Remove(documentView);
     }
     
     private void RemoveTabForFile(string filePath)
@@ -420,6 +420,10 @@ public class MainWindowViewModel
                 var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
                 BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
             }
+        }
+        else
+        {
+            BreadcrumbBarControl?.SetBreadcrumb(String.Empty);
         }
     }
     

@@ -18,16 +18,16 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <!-- Breadcrumb Button -->
-                        <Button Content="{Binding Text}" Click="Button_Click" />
+                        <Button Style="{StaticResource CustomButtonStyle}" Content="{Binding Text}" Click="Button_Click" />
                         <!-- Popup -->
                         <Popup StaysOpen="False" Placement="Top" IsOpen="{Binding IsPopupOpen}">
-                            <Border Background="LightGray" Padding="10">
+                            <Border Background="LightGray" Padding="8">
                                 <TextBlock Text="{Binding PopupContent}" />
                             </Border>
                         </Popup>
                     
                         <!-- Separator -->
-                        <TextBlock Text=" > " VerticalAlignment="Center" Margin="5,0">
+                        <TextBlock Text=" > " VerticalAlignment="Center"  HorizontalAlignment="Center" Margin="4,0" Foreground="{StaticResource TextBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Style.Triggers>

@@ -46,6 +46,10 @@ public partial class BreadcrumbBar : UserControl
     public void SetBreadcrumb(string path)
     {
         BreadcrumbItems.Clear();
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
         var pathParts = path.Split('\\');
         // only take after name of the parent folder
         for (int i = 0; i < pathParts.Length; i++)
