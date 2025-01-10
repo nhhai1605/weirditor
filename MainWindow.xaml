@@ -74,6 +74,7 @@
                             Style="{StaticResource MenuActionButton}" />
                 </StackPanel>
                 <Menu Style="{StaticResource CustomMenu}">
+                    <!-- TODO: Add AppIcon before menu  -->
                     <Menu.Items>
                         <!-- Padding on MenuItems -->
                         <MenuItem Header="File">
@@ -106,8 +107,7 @@
         <!-- Bottom Status Bar -->
         <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{StaticResource BackgroundBrush}">
             <DockPanel>
-                <controls:BreadcrumbBar x:Name="BreadcrumbBarControl">
-                </controls:BreadcrumbBar>
+                <controls:BreadcrumbBar x:Name="BreadcrumbBarControl"/>
             </DockPanel>
         </Border>
 

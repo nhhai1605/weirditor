@@ -57,6 +57,7 @@ public partial class BreadcrumbBar : UserControl
             }
             else
             {
+                //TODO: Add handle for opening file from breadcrumb bar
                 var directoryPath = string.Empty;
                 if (pathParts[i] == parentDirectoryName)
                 {
