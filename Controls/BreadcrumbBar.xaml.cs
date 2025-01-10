@@ -46,13 +46,14 @@ public partial class BreadcrumbBar : UserControl
             //if is file, get all functions and variables
             if (i == pathParts.Length - 1) // is file
             {
-                foreach (string funcAndVar in ExtractFunctionsAndVariables(filePath))
-                {
-                    children.Add(new BreadcrumbItem
-                    {
-                        Text = funcAndVar,
-                    });
-                }
+                //TODO: for now, just get all files in the directory, later we will get all functions and variables with tree-sitter or sth
+                // foreach (string funcAndVar in ExtractFunctionsAndVariables(filePath))
+                // {
+                //     children.Add(new BreadcrumbItem
+                //     {
+                //         Text = funcAndVar,
+                //     });
+                // }
             }
             else
             {
