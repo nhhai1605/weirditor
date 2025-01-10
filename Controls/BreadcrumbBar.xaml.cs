@@ -1,9 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using weirditor.Core;
+using weirditor.Models;
 
 namespace weirditor.Controls;
 
@@ -30,36 +33,53 @@ public partial class BreadcrumbBar : UserControl
         set => SetValue(BreadcrumbItemsProperty, value);
     }
 
-    public void SetBreadcrumb(string path)
+    public void SetBreadcrumb(string filePath, string parentDirectoryPath)
     {
+        var relative = filePath.Split(parentDirectoryPath)[1];
+        var parentDirectoryName = parentDirectoryPath.Split('\\').Last();
+        var pathParts = (parentDirectoryName + relative).Split('\\');
         BreadcrumbItems.Clear();
-        if (string.IsNullOrEmpty(path))
-        {
-            return;
-        }
-        var pathParts = path.Split('\\');
-        // only take after name of the parent folder
         for (int i = 0; i < pathParts.Length; i++)
         {
             //Todo: get all files in the path
+            var children = new ObservableCollection<BreadcrumbItem>();
+            //if is file, get all functions and variables
+            if (i == pathParts.Length - 1) // is file
+            {
+                foreach (string funcAndVar in ExtractFunctionsAndVariables(filePath))
+                {
+                    children.Add(new BreadcrumbItem
+                    {
+                        Text = funcAndVar,
+                    });
+                }
+            }
+            else
+            {
+                var directoryPath = string.Empty;
+                if (pathParts[i] == parentDirectoryName)
+                {
+                    directoryPath = parentDirectoryPath;
+                }
+                else
+                {
+                    directoryPath = parentDirectoryPath + "\\" + string.Join("\\", pathParts.Take(i + 1).Skip(1));
+                }
+                foreach (string file in Directory.GetFiles(directoryPath))
+                {
+                    children.Add(new BreadcrumbItem
+                    {
+                        Text = Path.GetFileName(file),
+                    });
+                }  
+                
+            }
             BreadcrumbItems.Add(new BreadcrumbItem
             {
                 Text = pathParts[i],
                 IsLastItem = i == pathParts.Length - 1,
                 IsEnabled = true,
-                Children = new ObservableCollection<BreadcrumbItem>
-                {
-                    new BreadcrumbItem
-                    {
-                        Text = "Child 1",
-                        IsLastItem = false
-                    },
-                    new BreadcrumbItem
-                    {
-                        Text = "Child 2",
-                        IsLastItem = false
-                    }
-                }
+                Children = children
             });
             //Now add a separator as a MenuItem that IsEnabled = false
             if(i < pathParts.Length - 1)
@@ -71,6 +91,50 @@ public partial class BreadcrumbBar : UserControl
                 });
             }
         }
+    }
+    
+    private List<string> ExtractFunctionsAndVariables(string filePath)
+    {
+        List<string> results = new();
+        try
+        {
+            string fileContent = File.ReadAllText(filePath);
+            string fileExtension = Path.GetExtension(filePath);
+            string pattern = string.Empty;
+
+            switch (fileExtension)
+            {
+                case ".cs":
+                    pattern = @"(public|private|protected|internal|static)?\s*\w+\s+\w+\s*\(.*?\)";
+                    break;
+                case ".py":
+                    pattern = @"def\s+\w+\s*\(.*?\):";
+                    break;
+                case ".cpp":
+                case ".c":
+                case ".h":
+                case ".hpp":
+                    pattern = @"\w+\s+\w+\s*\(.*?\)\s*{";
+                    break;
+                case ".java":
+                    pattern = @"(public|private|protected|static)?\s*\w+\s+\w+\s*\(.*?\)";
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(pattern))
+            {
+                Regex regex = new Regex(pattern);
+                foreach (Match match in regex.Matches(fileContent))
+                {
+                    results.Add(match.Value.Trim());
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return results;
     }
 }
 

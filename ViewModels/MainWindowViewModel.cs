@@ -422,21 +422,23 @@ public class MainWindowViewModel
             var documentView = DocumentViewList[EditorTabControl.SelectedIndex];
             if (documentView.Document.IsNew)
             {
-                BreadcrumbBarControl?.SetBreadcrumb(documentView.Document.FileName);
+                BreadcrumbBarControl?.BreadcrumbItems.Clear();
             }
             else
             {
-                var parentFolderName = ExploreView.ParentExplorer.FirstOrDefault()?.Name;
-                if (!string.IsNullOrEmpty(parentFolderName))
+                var parentExplorer = ExploreView.ParentExplorer.FirstOrDefault();
+                var parentDirectoryPath = parentExplorer?.Path;
+                if (!string.IsNullOrEmpty(parentDirectoryPath))
                 {
-                    var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
-                    BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
+                    // var path = documentView.Document.FilePath.Split("\\" + parentFolderName)[1];
+                    // BreadcrumbBarControl?.SetBreadcrumb(parentFolderName + path);
+                    BreadcrumbBarControl?.SetBreadcrumb(documentView.Document.FilePath, parentDirectoryPath);
                 }    
             }
         }
         else
         {
-            BreadcrumbBarControl?.SetBreadcrumb(String.Empty);
+            BreadcrumbBarControl?.BreadcrumbItems.Clear();
         }
     }
     
