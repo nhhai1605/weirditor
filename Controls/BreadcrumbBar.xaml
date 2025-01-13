@@ -13,13 +13,14 @@
                 <Setter Property="Header" Value="{Binding Text}" />
                 <Setter Property="ItemsSource" Value="{Binding Children}" />
                 <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
-                
                 <!-- This ensures child bindings inherit the same logic -->
                 <Setter Property="ItemContainerStyle">
                     <Setter.Value>
                         <Style TargetType="MenuItem" BasedOn="{StaticResource CustomMenuItemChildStyle}">
                             <Setter Property="Header" Value="{Binding Text}" />
                             <Setter Property="ItemsSource" Value="{Binding Children}" />
+                            <!-- set onClick event here for children menu item -->
+                            <EventSetter Event="Click" Handler="EventSetter_OnHandler"/>
                         </Style>
                     </Setter.Value>
                 </Setter>

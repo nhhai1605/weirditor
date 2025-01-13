@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using weirditor.Core;
 using weirditor.Models;
 
@@ -41,7 +42,6 @@ public partial class BreadcrumbBar : UserControl
         BreadcrumbItems.Clear();
         for (int i = 0; i < pathParts.Length; i++)
         {
-            //Todo: get all files in the path
             var children = new ObservableCollection<BreadcrumbItem>();
             //if is file, get all functions and variables
             if (i == pathParts.Length - 1) // is file
@@ -67,6 +67,15 @@ public partial class BreadcrumbBar : UserControl
                 {
                     directoryPath = parentDirectoryPath + "\\" + string.Join("\\", pathParts.Take(i + 1).Skip(1));
                 }
+                foreach (string directory in Directory.GetDirectories(directoryPath))
+                {
+                    var breadcrumbItem = new BreadcrumbItem
+                    {
+                        Text = Path.GetFileName(directory),
+                    };
+                    breadcrumbItem.RecursiveAddChildrenOfDirectory(directory);
+                    children.Add(breadcrumbItem);
+                }
                 foreach (string file in Directory.GetFiles(directoryPath))
                 {
                     children.Add(new BreadcrumbItem
@@ -79,7 +88,6 @@ public partial class BreadcrumbBar : UserControl
             BreadcrumbItems.Add(new BreadcrumbItem
             {
                 Text = pathParts[i],
-                IsLastItem = i == pathParts.Length - 1,
                 IsEnabled = true,
                 Children = children
             });
@@ -115,7 +123,6 @@ public partial class BreadcrumbBar : UserControl
                 case ".cpp":
                 case ".c":
                 case ".h":
-                case ".hpp":
                     pattern = @"\w+\s+\w+\s*\(.*?\)\s*{";
                     break;
                 case ".java":
@@ -138,29 +145,37 @@ public partial class BreadcrumbBar : UserControl
         }
         return results;
     }
+
+    private void EventSetter_OnHandler(object sender, RoutedEventArgs e)
+    {
+        var breadcrumbItem = (BreadcrumbItem)((MenuItem)sender).DataContext;
+    }
 }
 
 public class BreadcrumbItem : ObservableObject
 {
-    public string Text { get; set; }
-    public string PopupContent { get; set; }
-    public bool IsLastItem { get; set; }
-    public bool IsEnabled { get; set; }
-    private bool _isPopupOpen;
-
-    public bool IsPopupOpen
+    public string Text { get; set; } = string.Empty;
+    public bool IsEnabled { get; set; } = true;
+    public ObservableCollection<BreadcrumbItem> Children { get; set; } = new ();
+    
+    public void RecursiveAddChildrenOfDirectory(string directoryPath)
     {
-        get  { return _isPopupOpen; }
-        set
+        foreach (string directory in Directory.GetDirectories(directoryPath))
         {
-            OnPropertyChanged(ref _isPopupOpen, value);
-            
+            var breadcrumbItem = new BreadcrumbItem
+            {
+                Text = Path.GetFileName(directory),
+            };
+            breadcrumbItem.RecursiveAddChildrenOfDirectory(directory);
+            Children.Add(breadcrumbItem);
+        }
+        foreach (string file in Directory.GetFiles(directoryPath))
+        {
+            Children.Add(new BreadcrumbItem
+            {
+                Text = Path.GetFileName(file),
+            });
         }
     }
-    public ObservableCollection<BreadcrumbItem> Children { get; set; } // For hierarchical structure
-    
-    public void Children_OnClick(object sender, RoutedEventArgs e)
-    {
-        MessageBox.Show("Clicked");
-    }
+
 }
